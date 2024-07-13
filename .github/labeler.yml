@@ -1,0 +1,12 @@
+"📌 area: library":
+  - any: ["src/lib/**/*"]
+
+"📚 documentation":
+  - any: ["src/routes/**/*"]
+  - any: ["**/*.md"]
+
+"📌 area: ci":
+  - any: [".github/**/*"]
+
+"📌 area: tests":
+  - any: ["**/*.test.ts"]
