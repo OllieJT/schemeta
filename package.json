@@ -8,14 +8,12 @@
 	},
 	"scripts": {
 		"build": "tsup",
-		"dev": "tsup --watch",
 		"check": "pnpm run format:check && pnpm run typecheck && pnpm run lint",
+		"dev": "tsup --watch",
 		"format:check": "prettier . --check --ignore-unknown --no-error-on-unmatched-pattern && manypkg check",
 		"format": "prettier . --write --ignore-unknown --no-error-on-unmatched-pattern && manypkg fix",
 		"lint:fix": "eslint --fix .",
-		"lint": "eslint .",
-		"package": "publint",
-		"preview": "vite preview",
+		"lint": "eslint . && publint",
 		"release": "changeset version",
 		"test": "vitest",
 		"typecheck": "tsc --noEmit"
