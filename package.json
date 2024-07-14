@@ -27,7 +27,6 @@
 		"CHANGELOG.md",
 		"package.json"
 	],
-	"types": "./dist/index.d.ts",
 	"type": "module",
 	"packageManager": "pnpm@8.15.6",
 	"engines": {
