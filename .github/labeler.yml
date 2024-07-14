@@ -1,5 +1,5 @@
 "📌 area: library":
-  - any: ["src/lib/**/*"]
+  - any: ["src/**/*"]
 
 "📚 documentation":
   - any: ["src/routes/**/*"]

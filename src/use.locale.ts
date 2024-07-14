@@ -1,4 +1,4 @@
-import type { MetadataElement, OpenGraph } from "../types/tags.js";
+import type { MetadataElement, OpenGraph } from "./types/tags.js";
 
 export const use_locale = (site: { locale: string; locale_alternate?: string[] }) => {
 	const elements: MetadataElement[] = [

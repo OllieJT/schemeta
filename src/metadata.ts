@@ -1,5 +1,5 @@
-import { element_to_html } from "$src/lib/transform.js";
-import type { MetadataElement } from "../types/tags.js";
+import { element_to_html } from "$src/transform.js";
+import type { MetadataElement } from "./types/tags.js";
 import {
 	use_canonical,
 	use_description,

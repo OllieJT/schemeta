@@ -7,15 +7,14 @@
 		"directory": "cli"
 	},
 	"scripts": {
-		"build": "vite build && npm run package",
-		"check": "pnpm format:check && pnpm typecheck && pnpm lint",
-		"dev": "vite dev",
+		"build": "tsup",
+		"dev": "tsup --watch",
+		"check": "pnpm run format:check && pnpm run typecheck && pnpm run lint",
 		"format:check": "prettier . --check --ignore-unknown --no-error-on-unmatched-pattern && manypkg check",
 		"format": "prettier . --write --ignore-unknown --no-error-on-unmatched-pattern && manypkg fix",
 		"lint:fix": "eslint --fix .",
 		"lint": "eslint .",
 		"package": "publint",
-		"prepublish": "npm run package",
 		"preview": "vite preview",
 		"release": "changeset version",
 		"test": "vitest",
@@ -24,7 +23,11 @@
 	"files": [
 		"dist",
 		"!dist/**/*.test.*",
-		"!dist/**/*.spec.*"
+		"!dist/**/*.spec.*",
+		"README.md",
+		"LICENSE",
+		"CHANGELOG.md",
+		"package.json"
 	],
 	"types": "./dist/index.d.ts",
 	"type": "module",

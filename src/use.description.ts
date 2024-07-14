@@ -1,4 +1,4 @@
-import type { MetadataElement, OpenGraph, Twitter } from "../types/tags.js";
+import type { MetadataElement, OpenGraph, Twitter } from "./types/tags.js";
 
 export const use_description = (description: string) => {
 	const og_desc: OpenGraph.Description = {

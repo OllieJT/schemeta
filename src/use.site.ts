@@ -1,4 +1,4 @@
-import type { MetadataElement, OpenGraph, Web } from "../types/tags.js";
+import type { MetadataElement, OpenGraph, Web } from "./types/tags.js";
 
 export const use_site = (site: {
 	site_name: string;
