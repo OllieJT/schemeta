@@ -1,4 +1,5 @@
-// Reexport your entry components here
-export function hello(value: string) {
-	return `Hello ${value}`;
-}
+import { Metadata } from "./metadata.js";
+
+export { Metadata };
+
+export const metadata = new Metadata();
