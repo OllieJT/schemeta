@@ -1,5 +1,11 @@
 # schemeta
 
+## 0.1.1
+
+### Patch Changes
+
+- [#7](https://github.com/OllieJT/schemeta/pull/7) [`84e032c`](https://github.com/OllieJT/schemeta/commit/84e032c206470d70cb4a7d1b15de6a9e35d8d077) Thanks [@OllieJT](https://github.com/OllieJT)! - Fix dependency inclusion
+
 ## 0.1.0
 
 ### Minor Changes
