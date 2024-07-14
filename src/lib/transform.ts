@@ -3,7 +3,7 @@ import type {
 	MetadataElement,
 	MetaElement,
 	ScriptElement,
-} from "$lib/types/entity.js";
+} from "$src/types/entity.js";
 
 export function meta_to_html<T extends MetaElement<"name" | "property", string>>(element: T) {
 	// attributes to string

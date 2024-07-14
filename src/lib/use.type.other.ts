@@ -1,5 +1,5 @@
-import type { MetadataElement } from "$lib/types/entity.js";
-import type { OpenGraph } from "$lib/types/tags.js";
+import type { MetadataElement } from "$src/types/entity.js";
+import type { OpenGraph } from "$src/types/tags.js";
 
 export function use_type_article(data: {
 	published_time?: Date;

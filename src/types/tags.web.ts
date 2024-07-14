@@ -8,3 +8,6 @@ export type Description = MetaElement<"name", "description">;
 export type ThemeColor = MetaElement<"name", "theme-color", ColorValue>;
 export type MsApplicationTileImage = MetaElement<"name", "msapplication-TileImage">;
 
+/*
+	<title>Content</title>
+*/

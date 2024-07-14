@@ -1,4 +1,4 @@
-import type { MetadataElement, Twitter } from "./types/tags.js";
+import type { MetadataElement, Twitter } from "../types/tags.js";
 
 export const use_twitter = (twitter: {
 	card: Twitter.CardValue;

@@ -1,4 +1,4 @@
-import type { Prettify } from "$lib/types/utility.js";
+import type { Prettify } from "$src/types/utility.js";
 
 type ElementModel<Element extends string, Attribs extends Record<string, unknown>> = {
 	element: Element;

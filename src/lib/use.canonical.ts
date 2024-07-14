@@ -1,4 +1,4 @@
-import type { MetadataElement, OpenGraph, Twitter, Web } from "./types/tags.js";
+import type { MetadataElement, OpenGraph, Twitter, Web } from "../types/tags.js";
 
 export const use_canonical = (url: string) => {
 	const og_url: OpenGraph.Url = {
