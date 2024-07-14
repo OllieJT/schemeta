@@ -1,5 +1,5 @@
 <p align="center">
- <img src="https://github.com/OllieJT/schemeta/blob/main/media/banner.png?raw=true" width="600" height="288" alt="sche/ma in a pixelated monospaced font, on a blue-green glowing background">
+ <img src="https://github.com/OllieJT/schemeta/blob/main/static/banner.png?raw=true" width="600" height="288" alt="sche/ma in a pixelated monospaced font, on a blue-green glowing background">
 </p>
 
 <h1 align="center">
@@ -7,7 +7,7 @@
 </h1>
 
 <p align="center">
-  Schemeta streamlines & simplifies the creation of web metadata,
+  Schemeta streamlines & simplifies the creation of web metadata,<br />
   making it easier to leverage standards such as <a href="https://ogp.me">OpenGraph</a>, and <a href="https://json-ld.org">JSON-LD</a>.
 </p>
 
