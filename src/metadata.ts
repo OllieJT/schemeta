@@ -147,7 +147,7 @@ export class Metadata {
 			...Array.from(this.#elements).map((el) => element_to_html(el)),
 			script_to_graph(Array.from(this.#linked_data)),
 		];
-		return dataset.join("\n");
+		return dataset;
 	}
 }
 
