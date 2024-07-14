@@ -5,8 +5,8 @@
   - any: ["src/routes/**/*"]
   - any: ["**/*.md"]
 
-"📌 area: ci":
+"🚧 area: ci":
   - any: [".github/**/*"]
 
-"📌 area: tests":
+"🚧 area: tests":
   - any: ["**/*.test.ts"]
