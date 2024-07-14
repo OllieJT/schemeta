@@ -1,5 +1,17 @@
 # schemeta
 
+## 0.1.0
+
+### Minor Changes
+
+- [#3](https://github.com/OllieJT/schemeta/pull/3) [`afd05ae`](https://github.com/OllieJT/schemeta/commit/afd05ae951f0d41ca9e47b9e0d8e42e07915982e) Thanks [@OllieJT](https://github.com/OllieJT)! - Adds support for Linked Data
+
+### Patch Changes
+
+- [#5](https://github.com/OllieJT/schemeta/pull/5) [`77b636d`](https://github.com/OllieJT/schemeta/commit/77b636dba1e3c96e7b87136efbdf7311dcd960b2) Thanks [@OllieJT](https://github.com/OllieJT)! - Added basic docs
+
+- [#3](https://github.com/OllieJT/schemeta/pull/3) [`afd05ae`](https://github.com/OllieJT/schemeta/commit/afd05ae951f0d41ca9e47b9e0d8e42e07915982e) Thanks [@OllieJT](https://github.com/OllieJT)! - Simplify og:type metadata
+
 ## 0.0.2
 
 ### Patch Changes
