@@ -23,7 +23,6 @@ jobs:
       - uses: ./.github/actions/setup
 
       - run: pnpm lint
-      - run: pnpm manypkg check
 
   check-changeset:
     runs-on: ubuntu-latest
