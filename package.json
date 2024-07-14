@@ -2,10 +2,10 @@
 	"name": "schemeta",
 	"version": "0.1.0",
 	"private": false,
+	"homepage": "https://github.com/OllieJT/schemeta/blob/main/README.md",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/olliejt/schemeta.git",
-		"directory": "cli"
+		"url": "https://github.com/olliejt/schemeta.git"
 	},
 	"scripts": {
 		"build": "tsup",
