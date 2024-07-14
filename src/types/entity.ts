@@ -6,8 +6,8 @@ type ElementModel<Element extends string, Attribs extends Record<string, unknown
 };
 
 export type MetaElement<
-	Type extends "name" | "property",
-	Name extends string,
+	Type extends "name" | "property" = "name" | "property",
+	Name extends string = string,
 	Content extends string | number = string | number,
 > = Prettify<
 	ElementModel<
@@ -16,17 +16,17 @@ export type MetaElement<
 	>
 >;
 
-export type LinkElement<Rel extends string> = Prettify<
+export type LinkElement<Rel extends string = string> = Prettify<
 	ElementModel<"link", { rel: Rel; href: string; hreflang?: string }>
 >;
 
-export type ScriptElement<Children extends Record<string, unknown>> = Prettify<
-	ElementModel<"script", { type: "application/ld+json" }> & {
+export type ScriptElement<
+	Type extends "application/ld+json" = "application/ld+json",
+	Children extends object = object,
+> = Prettify<
+	ElementModel<"script", { type: Type }> & {
 		children: Children;
 	}
 >;
 
-export type MetadataElement =
-	| MetaElement<"name" | "property", string>
-	| LinkElement<string>
-	| ScriptElement<Record<string, unknown>>;
+export type MetadataElement = MetaElement | LinkElement | ScriptElement;

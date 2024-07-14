@@ -10,6 +10,7 @@ type Episode = {
 	tags?: string[];
 	series?: { url: string };
 };
+
 type Movie = {
 	actor?: { url: string; role?: string }[];
 	director?: { url: string };

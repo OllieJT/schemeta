@@ -1,9 +1,10 @@
-import { element_to_html } from "$src/transform.js";
-import type { MetadataElement } from "./types/tags.js";
+import { element_to_html, script_to_graph } from "$src/transform.js";
+import type { Json, MetadataElement } from "./types/tags.js";
 import {
 	use_canonical,
 	use_description,
 	use_image,
+	use_json_ld,
 	use_site,
 	use_title,
 	use_twitter,
@@ -17,9 +18,16 @@ import {
 
 export class Metadata {
 	#elements = new Set<MetadataElement>([]);
+	#linked_data = new Set<Json.LD>([]);
 
 	constructor(initialElements?: MetadataElement[]) {
-		this.#elements = new Set(initialElements ?? []);
+		initialElements?.forEach((item) => {
+			if (item.element === "script" && item.attributes.type === "application/ld+json") {
+				this.#linked_data.add(item as Json.LD);
+			} else {
+				this.#elements.add(item);
+			}
+		});
 	}
 
 	// use_title
@@ -58,63 +66,65 @@ export class Metadata {
 		return this;
 	}
 
-	// use_type_article,
-	type_article(params: Parameters<typeof use_type_article>[0]) {
-		use_type_article(params).forEach((element) => this.#elements.add(element));
-		return this;
+	type({
+		type,
+		params,
+	}:
+		| { type: "article"; params: Parameters<typeof use_type_article>[0] }
+		| { type: "book"; params: Parameters<typeof use_type_book>[0] }
+		| { type: "music.song"; params: Parameters<typeof use_type_music.song>[0] }
+		| { type: "music.album"; params: Parameters<typeof use_type_music.album>[0] }
+		| { type: "music.playlist"; params: Parameters<typeof use_type_music.playlist>[0] }
+		| { type: "music.radio_station"; params: Parameters<typeof use_type_music.radio_station>[0] }
+		| { type: "profile"; params: Parameters<typeof use_type_profile>[0] }
+		| { type: "video.episode"; params: Parameters<typeof use_type_video.episode>[0] }
+		| { type: "video.movie"; params: Parameters<typeof use_type_video.movie>[0] }
+		| { type: "video.other"; params: Parameters<typeof use_type_video.other>[0] }
+		| { type: "video.tv_show"; params: Parameters<typeof use_type_video.tv_show>[0] }
+		| { type: "website"; params?: never }) {
+		if (type === "article") {
+			use_type_article(params).forEach((element) => this.#elements.add(element));
+			return this;
+		} else if (type === "book") {
+			use_type_book(params).forEach((element) => this.#elements.add(element));
+			return this;
+		} else if (type === "music.song") {
+			use_type_music.song(params).forEach((element) => this.#elements.add(element));
+			return this;
+		} else if (type === "music.album") {
+			use_type_music.album(params).forEach((element) => this.#elements.add(element));
+			return this;
+		} else if (type === "music.playlist") {
+			use_type_music.playlist(params).forEach((element) => this.#elements.add(element));
+			return this;
+		} else if (type === "music.radio_station") {
+			use_type_music.radio_station(params).forEach((element) => this.#elements.add(element));
+			return this;
+		} else if (type === "profile") {
+			use_type_profile(params).forEach((element) => this.#elements.add(element));
+			return this;
+		} else if (type === "video.episode") {
+			use_type_video.episode(params).forEach((element) => this.#elements.add(element));
+			return this;
+		} else if (type === "video.movie") {
+			use_type_video.movie(params).forEach((element) => this.#elements.add(element));
+			return this;
+		} else if (type === "video.other") {
+			use_type_video.other(params).forEach((element) => this.#elements.add(element));
+			return this;
+		} else if (type === "video.tv_show") {
+			use_type_video.tv_show(params).forEach((element) => this.#elements.add(element));
+			return this;
+		} else if (type === "website") {
+			use_type_website().forEach((element) => this.#elements.add(element));
+			return this;
+		} else {
+			throw new Error(`Unknown type: ${type}`);
+		}
 	}
 
-	// use_type_book,
-	type_book(params: Parameters<typeof use_type_book>[0]) {
-		use_type_book(params).forEach((element) => this.#elements.add(element));
-		return this;
-	}
-
-	// use_type_music,
-	type_music_song(params: Parameters<typeof use_type_music.song>[0]) {
-		use_type_music.song(params).forEach((element) => this.#elements.add(element));
-		return this;
-	}
-	type_music_album(params: Parameters<typeof use_type_music.album>[0]) {
-		use_type_music.album(params).forEach((element) => this.#elements.add(element));
-		return this;
-	}
-	type_music_playlist(params: Parameters<typeof use_type_music.playlist>[0]) {
-		use_type_music.playlist(params).forEach((element) => this.#elements.add(element));
-		return this;
-	}
-	type_music_radio_station(params: Parameters<typeof use_type_music.radio_station>[0]) {
-		use_type_music.radio_station(params).forEach((element) => this.#elements.add(element));
-		return this;
-	}
-
-	// use_type_profile,
-	type_profile(params: Parameters<typeof use_type_profile>[0]) {
-		use_type_profile(params).forEach((element) => this.#elements.add(element));
-		return this;
-	}
-
-	// use_type_video,
-	type_video_episode(params: Parameters<typeof use_type_video.episode>[0]) {
-		use_type_video.episode(params).forEach((element) => this.#elements.add(element));
-		return this;
-	}
-	type_video_movie(params: Parameters<typeof use_type_video.movie>[0]) {
-		use_type_video.movie(params).forEach((element) => this.#elements.add(element));
-		return this;
-	}
-	type_video_other(params: Parameters<typeof use_type_video.other>[0]) {
-		use_type_video.other(params).forEach((element) => this.#elements.add(element));
-		return this;
-	}
-	type_video_tv_show(params: Parameters<typeof use_type_video.tv_show>[0]) {
-		use_type_video.tv_show(params).forEach((element) => this.#elements.add(element));
-		return this;
-	}
-
-	// use_type_website
-	type_website() {
-		use_type_website().forEach((element) => this.#elements.add(element));
+	linked_data(params: Parameters<typeof use_json_ld>[0]) {
+		use_json_ld(params).forEach((element) => this.#linked_data.add(element));
 		return this;
 	}
 
@@ -128,16 +138,22 @@ export class Metadata {
 	}
 
 	toString() {
-		return JSON.stringify(Array.from(this.#elements), null, 2);
+		const dataset = [...Array.from(this.#elements), ...Array.from(this.#linked_data)];
+		return JSON.stringify(dataset, null, 2);
 	}
 
 	toHTML() {
-		return Array.from(this.#elements)
-			.map((el) => element_to_html(el))
-			.join("\n");
+		const dataset = [
+			...Array.from(this.#elements).map((el) => element_to_html(el)),
+			script_to_graph(Array.from(this.#linked_data)),
+		];
+		return dataset.join("\n");
 	}
 }
 
+const meta = new Metadata();
+
+meta.title("123").type({ type: "website" }).description("456");
 /*
 
 

@@ -46,12 +46,13 @@
 		"eslint-config-prettier": "^9.1.0",
 		"globals": "^15.0.0",
 		"prettier": "^3.1.1",
-		"publint": "^0.1.9",
+		"publint": "^0.2.8",
+		"schema-dts": "^1.1.2",
 		"tslib": "^2.4.1",
 		"tsup": "^8.1.0",
 		"typescript": "^5.0.0",
 		"typescript-eslint": "^8.0.0-alpha.20",
 		"vite": "^5.0.11",
-		"vitest": "^1.2.0"
+		"vitest": "^2.0.2"
 	}
 }

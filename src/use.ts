@@ -1,6 +1,7 @@
 export * from "./use.canonical.js";
 export * from "./use.description.js";
 export * from "./use.image.js";
+export * from "./use.json.ld.js";
 export * from "./use.site.js";
 export * from "./use.title.js";
 export * from "./use.twitter.js";
