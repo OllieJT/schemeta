@@ -1,9 +1,10 @@
-import { element_to_html } from "$src/transform.js";
-import type { MetadataElement } from "./types/tags.js";
+import { element_to_html, script_to_graph } from "$src/transform.js";
+import type { Json, MetadataElement } from "./types/tags.js";
 import {
 	use_canonical,
 	use_description,
 	use_image,
+	use_json_ld,
 	use_site,
 	use_title,
 	use_twitter,
@@ -17,9 +18,16 @@ import {
 
 export class Metadata {
 	#elements = new Set<MetadataElement>([]);
+	#linked_data = new Set<Json.LD>([]);
 
 	constructor(initialElements?: MetadataElement[]) {
-		this.#elements = new Set(initialElements ?? []);
+		initialElements?.forEach((item) => {
+			if (item.element === "script" && item.attributes.type === "application/ld+json") {
+				this.#linked_data.add(item as Json.LD);
+			} else {
+				this.#elements.add(item);
+			}
+		});
 	}
 
 	// use_title
@@ -115,6 +123,11 @@ export class Metadata {
 		}
 	}
 
+	linked_data(params: Parameters<typeof use_json_ld>[0]) {
+		use_json_ld(params).forEach((element) => this.#linked_data.add(element));
+		return this;
+	}
+
 	add(element: MetadataElement) {
 		this.#elements.add(element);
 		return this;
@@ -125,13 +138,16 @@ export class Metadata {
 	}
 
 	toString() {
-		return JSON.stringify(Array.from(this.#elements), null, 2);
+		const dataset = [...Array.from(this.#elements), ...Array.from(this.#linked_data)];
+		return JSON.stringify(dataset, null, 2);
 	}
 
 	toHTML() {
-		return Array.from(this.#elements)
-			.map((el) => element_to_html(el))
-			.join("\n");
+		const dataset = [
+			...Array.from(this.#elements).map((el) => element_to_html(el)),
+			script_to_graph(Array.from(this.#linked_data)),
+		];
+		return dataset.join("\n");
 	}
 }
 

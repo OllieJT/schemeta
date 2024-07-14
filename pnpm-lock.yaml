@@ -50,6 +50,9 @@ importers:
       publint:
         specifier: ^0.2.8
         version: 0.2.8
+      schema-dts:
+        specifier: ^1.1.2
+        version: 1.1.2(typescript@5.5.3)
       tslib:
         specifier: ^2.4.1
         version: 2.6.3
@@ -1654,6 +1657,11 @@ packages:
 
   safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
+
+  schema-dts@1.1.2:
+    resolution: {integrity: sha512-MpNwH0dZJHinVxk9bT8XUdjKTxMYrA5bLtrrGmFA6PTLwlOKnhi67XoRd6/ty+Djt6ZC0slR57qFhZDNMI6DhQ==}
+    peerDependencies:
+      typescript: '>=4.1.0'
 
   sembear@0.5.2:
     resolution: {integrity: sha512-Ij1vCAdFgWABd7zTg50Xw1/p0JgESNxuLlneEAsmBrKishA06ulTTL/SHGmNy2Zud7+rKrHTKNI6moJsn1ppAQ==}
@@ -3677,6 +3685,10 @@ snapshots:
       mri: 1.2.0
 
   safer-buffer@2.1.2: {}
+
+  schema-dts@1.1.2(typescript@5.5.3):
+    dependencies:
+      typescript: 5.5.3
 
   sembear@0.5.2:
     dependencies:

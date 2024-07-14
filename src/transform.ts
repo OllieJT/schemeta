@@ -4,8 +4,10 @@ import type {
 	MetaElement,
 	ScriptElement,
 } from "$src/types/entity.js";
+import { Json } from "$src/types/tags.js";
+import { Graph } from "schema-dts";
 
-export function meta_to_html<T extends MetaElement<"name" | "property", string>>(element: T) {
+export function meta_to_html<T extends MetaElement>(element: T) {
 	// attributes to string
 	const attributes = Object.entries(element.attributes)
 		.map(([key, value]) => `${key}="${value}"`)
@@ -14,7 +16,7 @@ export function meta_to_html<T extends MetaElement<"name" | "property", string>>
 	return `<${element.element} ${attributes} />`;
 }
 
-export function link_to_html<T extends LinkElement<string>>(element: T) {
+export function link_to_html<T extends LinkElement>(element: T) {
 	// attributes to string
 	const attributes = Object.entries(element.attributes)
 		.map(([key, value]) => `${key}="${value}"`)
@@ -23,7 +25,7 @@ export function link_to_html<T extends LinkElement<string>>(element: T) {
 	return `<${element.element} ${attributes} />`;
 }
 
-export function script_to_html<T extends ScriptElement<Record<string, unknown>>>(element: T) {
+export function script_to_html<T extends ScriptElement>(element: T) {
 	// attributes to string
 	const attributes = Object.entries(element.attributes)
 		.map(([key, value]) => `${key}="${value}"`)
@@ -33,6 +35,17 @@ export function script_to_html<T extends ScriptElement<Record<string, unknown>>>
 	const children = JSON.stringify(element.children);
 
 	return `<${element.element} ${attributes}>${children}</${element.element}>`;
+}
+
+export function script_to_graph<T extends Json.LD>(elements: T[]) {
+	const things = elements.map((el) => el.children);
+
+	const graph = JSON.stringify({
+		"@context": "https://schema.org",
+		"@graph": things,
+	} satisfies Graph);
+
+	return `<script type="application/ld+json">${graph}</script>`;
 }
 
 export function element_to_html(element: MetadataElement) {
