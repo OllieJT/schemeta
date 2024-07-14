@@ -58,64 +58,61 @@ export class Metadata {
 		return this;
 	}
 
-	// use_type_article,
-	type_article(params: Parameters<typeof use_type_article>[0]) {
-		use_type_article(params).forEach((element) => this.#elements.add(element));
-		return this;
-	}
-
-	// use_type_book,
-	type_book(params: Parameters<typeof use_type_book>[0]) {
-		use_type_book(params).forEach((element) => this.#elements.add(element));
-		return this;
-	}
-
-	// use_type_music,
-	type_music_song(params: Parameters<typeof use_type_music.song>[0]) {
-		use_type_music.song(params).forEach((element) => this.#elements.add(element));
-		return this;
-	}
-	type_music_album(params: Parameters<typeof use_type_music.album>[0]) {
-		use_type_music.album(params).forEach((element) => this.#elements.add(element));
-		return this;
-	}
-	type_music_playlist(params: Parameters<typeof use_type_music.playlist>[0]) {
-		use_type_music.playlist(params).forEach((element) => this.#elements.add(element));
-		return this;
-	}
-	type_music_radio_station(params: Parameters<typeof use_type_music.radio_station>[0]) {
-		use_type_music.radio_station(params).forEach((element) => this.#elements.add(element));
-		return this;
-	}
-
-	// use_type_profile,
-	type_profile(params: Parameters<typeof use_type_profile>[0]) {
-		use_type_profile(params).forEach((element) => this.#elements.add(element));
-		return this;
-	}
-
-	// use_type_video,
-	type_video_episode(params: Parameters<typeof use_type_video.episode>[0]) {
-		use_type_video.episode(params).forEach((element) => this.#elements.add(element));
-		return this;
-	}
-	type_video_movie(params: Parameters<typeof use_type_video.movie>[0]) {
-		use_type_video.movie(params).forEach((element) => this.#elements.add(element));
-		return this;
-	}
-	type_video_other(params: Parameters<typeof use_type_video.other>[0]) {
-		use_type_video.other(params).forEach((element) => this.#elements.add(element));
-		return this;
-	}
-	type_video_tv_show(params: Parameters<typeof use_type_video.tv_show>[0]) {
-		use_type_video.tv_show(params).forEach((element) => this.#elements.add(element));
-		return this;
-	}
-
-	// use_type_website
-	type_website() {
-		use_type_website().forEach((element) => this.#elements.add(element));
-		return this;
+	type({
+		type,
+		params,
+	}:
+		| { type: "article"; params: Parameters<typeof use_type_article>[0] }
+		| { type: "book"; params: Parameters<typeof use_type_book>[0] }
+		| { type: "music.song"; params: Parameters<typeof use_type_music.song>[0] }
+		| { type: "music.album"; params: Parameters<typeof use_type_music.album>[0] }
+		| { type: "music.playlist"; params: Parameters<typeof use_type_music.playlist>[0] }
+		| { type: "music.radio_station"; params: Parameters<typeof use_type_music.radio_station>[0] }
+		| { type: "profile"; params: Parameters<typeof use_type_profile>[0] }
+		| { type: "video.episode"; params: Parameters<typeof use_type_video.episode>[0] }
+		| { type: "video.movie"; params: Parameters<typeof use_type_video.movie>[0] }
+		| { type: "video.other"; params: Parameters<typeof use_type_video.other>[0] }
+		| { type: "video.tv_show"; params: Parameters<typeof use_type_video.tv_show>[0] }
+		| { type: "website"; params?: never }) {
+		if (type === "article") {
+			use_type_article(params).forEach((element) => this.#elements.add(element));
+			return this;
+		} else if (type === "book") {
+			use_type_book(params).forEach((element) => this.#elements.add(element));
+			return this;
+		} else if (type === "music.song") {
+			use_type_music.song(params).forEach((element) => this.#elements.add(element));
+			return this;
+		} else if (type === "music.album") {
+			use_type_music.album(params).forEach((element) => this.#elements.add(element));
+			return this;
+		} else if (type === "music.playlist") {
+			use_type_music.playlist(params).forEach((element) => this.#elements.add(element));
+			return this;
+		} else if (type === "music.radio_station") {
+			use_type_music.radio_station(params).forEach((element) => this.#elements.add(element));
+			return this;
+		} else if (type === "profile") {
+			use_type_profile(params).forEach((element) => this.#elements.add(element));
+			return this;
+		} else if (type === "video.episode") {
+			use_type_video.episode(params).forEach((element) => this.#elements.add(element));
+			return this;
+		} else if (type === "video.movie") {
+			use_type_video.movie(params).forEach((element) => this.#elements.add(element));
+			return this;
+		} else if (type === "video.other") {
+			use_type_video.other(params).forEach((element) => this.#elements.add(element));
+			return this;
+		} else if (type === "video.tv_show") {
+			use_type_video.tv_show(params).forEach((element) => this.#elements.add(element));
+			return this;
+		} else if (type === "website") {
+			use_type_website().forEach((element) => this.#elements.add(element));
+			return this;
+		} else {
+			throw new Error(`Unknown type: ${type}`);
+		}
 	}
 
 	add(element: MetadataElement) {
@@ -138,6 +135,9 @@ export class Metadata {
 	}
 }
 
+const meta = new Metadata();
+
+meta.title("123").type({ type: "website" }).description("456");
 /*
 
 
