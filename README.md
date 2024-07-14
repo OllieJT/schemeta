@@ -7,7 +7,7 @@
 </h1>
 
 <p align="center">
-  Schemeta streamlines & simplifies the creation of web metadata,
+  Schemeta streamlines & simplifies the creation of web metadata,<br />
   making it easier to leverage standards such as <a href="https://ogp.me">OpenGraph</a>, and <a href="https://json-ld.org">JSON-LD</a>.
 </p>
 
