@@ -1,5 +1,23 @@
 # schemeta
 
+## 0.2.0
+
+### Minor Changes
+
+- [#9](https://github.com/OllieJT/schemeta/pull/9) [`5f6c5e0`](https://github.com/OllieJT/schemeta/commit/5f6c5e05bf9dc004442119c796dd2a7865ba1162) Thanks [@OllieJT](https://github.com/OllieJT)! - Refactor metadata API abstractions for improved consistency
+
+### Patch Changes
+
+- [`351df70`](https://github.com/OllieJT/schemeta/commit/351df707a5c7b1616a3a1dc7390a39cffc9b0d5b) Thanks [@OllieJT](https://github.com/OllieJT)! - Adds missing description meta tag
+
+- [#9](https://github.com/OllieJT/schemeta/pull/9) [`5f6c5e0`](https://github.com/OllieJT/schemeta/commit/5f6c5e05bf9dc004442119c796dd2a7865ba1162) Thanks [@OllieJT](https://github.com/OllieJT)! - Updated docs to reflect refactor
+
+- [#9](https://github.com/OllieJT/schemeta/pull/9) [`5f6c5e0`](https://github.com/OllieJT/schemeta/commit/5f6c5e05bf9dc004442119c796dd2a7865ba1162) Thanks [@OllieJT](https://github.com/OllieJT)! - Adds npm stats to readme
+
+- [#9](https://github.com/OllieJT/schemeta/pull/9) [`5f6c5e0`](https://github.com/OllieJT/schemeta/commit/5f6c5e05bf9dc004442119c796dd2a7865ba1162) Thanks [@OllieJT](https://github.com/OllieJT)! - Adds supported metadata to readme
+
+- [#10](https://github.com/OllieJT/schemeta/pull/10) [`6889375`](https://github.com/OllieJT/schemeta/commit/688937536d58da7200cab8a85705371fe215dd73) Thanks [@OllieJT](https://github.com/OllieJT)! - Update deps
+
 ## 0.1.1
 
 ### Patch Changes
