@@ -1,73 +1,172 @@
-import { configs_to_html, values_to_configs } from "$src/transform.js";
-import { ValueMap } from "$src/types/value-map.js";
+import { to_elements } from "$src/to-elements.js";
+import { to_html } from "$src/to-html.js";
+import { Prettify } from "$src/types/utility.js";
+import type { Meta, RDFa, XML } from "$src/types/values.js";
 
 export class Metadata {
-	values: Partial<ValueMap> = {};
+	#meta: Meta.ValueMap = {
+		"application-name": undefined,
+		title: undefined,
+		description: undefined,
+		canonical: undefined,
+		"theme-color": undefined,
+		"msapplication-allowDomainApiCalls": undefined,
+		"msapplication-allowDomainMetaTags": undefined,
+		"msapplication-badge": undefined,
+		"msapplication-config": undefined,
+		"msapplication-navbutton-color": undefined,
+		"msapplication-notification": undefined,
+		"msapplication-square150x150logo": undefined,
+		"msapplication-square310x310logo": undefined,
+		"msapplication-square70x70logo": undefined,
+		"msapplication-starturl": undefined,
+		"msapplication-task-separator": undefined,
+		"msapplication-task": [],
+		"msapplication-TileColor": undefined,
+		"msapplication-TileImage": undefined,
+		"msapplication-tooltip": undefined,
+		"msapplication-wide310x150logo": undefined,
+		"msapplication-window": undefined,
+		"twitter:card": undefined,
+		"twitter:creator": undefined,
+		"twitter:description": undefined,
+		"twitter:image": [],
+		"twitter:site": undefined,
+		"twitter:title": undefined,
+		"twitter:url": undefined,
+	};
+	#rdfa: RDFa.ValueMap = {
+		"og:site_name": undefined,
+		"og:determiner": undefined,
+		"og:title": undefined,
+		"og:description": undefined,
+		"og:image": [],
+		"og:locale": undefined,
+		"og:locale:alternate": [],
+		"og:url": undefined,
+		"og:audio": undefined,
+		"og:video": undefined,
+		"og:type": undefined,
+		"og:music:duration": undefined,
+		"og:music:album": [],
+		"og:music:musician": [],
+		"og:music:song": [],
+		"og:music:release_date": undefined,
+		"og:music:creator": undefined,
+		"og:video:actor": [],
+		"og:video:director": [],
+		"og:video:duration": undefined,
+		"og:video:release_date": undefined,
+		"og:video:tag": [],
+		"og:video:series": undefined,
+		"og:video:writer": [],
+		"og:article:author": [],
+		"og:article:expiration_time": undefined,
+		"og:article:modified_time": undefined,
+		"og:article:published_time": undefined,
+		"og:article:section": undefined,
+		"og:article:tag": [],
+		"og:book:author": [],
+		"og:book:isbn": undefined,
+		"og:book:release_date": undefined,
+		"og:book:tag": [],
+		"og:profile:first_name": undefined,
+		"og:profile:gender": undefined,
+		"og:profile:last_name": undefined,
+		"og:profile:username": undefined,
+	};
+	#script: XML.ValueMap = {
+		title: undefined,
+		schema: [],
+	};
 
-	// TODO: Manage og / meta / schema - seperately
-
-	constructor(initialElements?: Partial<ValueMap>) {
-		if (initialElements) {
-			this.values = initialElements;
-		}
+	constructor(values?: {
+		meta?: Partial<Meta.ValueMap>;
+		rdfa?: Partial<RDFa.ValueMap>;
+		scropt?: Partial<XML.ValueMap>;
+	}) {
+		if (values?.meta) this.#meta = { ...this.#meta, ...values.meta };
+		if (values?.rdfa) this.#rdfa = { ...this.#rdfa, ...values.rdfa };
+		if (values?.scropt) this.#script = { ...this.#script, ...values.scropt };
 	}
 
-	add<Key extends keyof ValueMap>(key: Key, value: ValueMap[Key]) {
-		if (this.values[key] && Array.isArray(this.values[key])) {
-			this.values = {
-				...this.values,
-				[key]: [...this.values[key], value],
-			};
-			return this;
+	// Add Values
+	add_meta<Key extends keyof Meta.Values>(key: Key, value: Meta.Values[Key]) {
+		if (this.#meta[key] && Array.isArray(this.#meta[key])) {
+			this.#meta = { ...this.#meta, [key]: [...this.#meta[key], value] };
 		} else {
-			this.values = {
-				...this.values,
-				[key]: value,
-			};
-			return this;
+			this.#meta = { ...this.#meta, [key]: value };
+		}
+		return this;
+	}
+	add_rdfa<Key extends keyof RDFa.Values>(key: Key, value: RDFa.Values[Key]) {
+		if (this.#rdfa[key] && Array.isArray(this.#rdfa[key])) {
+			this.#rdfa = { ...this.#rdfa, [key]: [...this.#rdfa[key], value] };
+		} else {
+			this.#rdfa = { ...this.#rdfa, [key]: value };
+		}
+		return this;
+	}
+	add_xml<Key extends keyof XML.Values>(key: Key, value: XML.Values[Key]) {
+		if (this.#script[key] && Array.isArray(this.#script[key])) {
+			this.#script = { ...this.#script, [key]: [...this.#script[key], value] };
+		} else {
+			this.#script = { ...this.#script, [key]: value };
+		}
+		return this;
+	}
+
+	add<Key extends keyof Meta.Values | keyof RDFa.Values | keyof XML.Values>({
+		key,
+		value,
+	}: Key extends keyof Meta.Values
+		? { key: Key; value: Meta.Values[Key] }
+		: Key extends keyof RDFa.Values
+			? { key: Key; value: RDFa.Values[Key] }
+			: Key extends keyof XML.Values
+				? { key: Key; value: XML.Values[Key] }
+				: never) {
+		if (key in this.#meta) {
+			const k = key as keyof Meta.Values;
+			this.add_meta(k, value as Meta.Values[typeof k]);
+		} else if (key in this.#rdfa) {
+			const k = key as keyof RDFa.Values;
+			this.add_rdfa(k, value as RDFa.Values[typeof k]);
+		} else if (key in this.#script) {
+			const k = key as keyof XML.Values;
+			this.add_xml(k, value as XML.Values[typeof k]);
 		}
 	}
 
 	title(value: string) {
-		// TODO: Fix title children
-		if (!this.values.title) this.add("title", {});
-		if (!this.values["og:title"]) this.add("og:title", { content: value });
-		if (!this.values["twitter:title"]) this.add("twitter:title", { content: value });
+		this.add_xml("title", value);
+		this.add_rdfa("og:title", value);
+		this.add_meta("twitter:title", value);
 		return this;
 	}
 	description(value: string) {
-		if (!this.values.description) this.add("description", { content: value });
-		if (!this.values["og:description"]) this.add("og:description", { content: value });
-		if (!this.values["twitter:description"]) this.add("twitter:description", { content: value });
+		this.add_meta("description", value);
+		this.add_rdfa("og:description", value);
+		this.add_meta("twitter:description", value);
 		return this;
 	}
 	url(value: URL) {
-		if (!this.values.canonical) this.add("canonical", { href: value });
-		if (!this.values["og:url"]) this.add("og:url", { content: value });
-		if (!this.values["twitter:url"]) this.add("twitter:url", { content: value });
-		if (!this.values["msapplication-starturl"]) this.add("msapplication-starturl", { href: value });
-		return this;
-	}
-	image(value: ValueMap["og:image"][number]) {
-		this.add("og:image", [value]);
-		this.add("twitter:image", [value]);
+		const canonical = new URL(value);
+		value.hash = "";
+		value.search = "";
 
+		this.add_meta("canonical", canonical);
+		this.add_rdfa("og:url", value);
+		this.add_meta("twitter:url", value);
+		this.add_meta("msapplication-starturl", value);
 		return this;
 	}
 
-	/* global(value: string) {
-		// theme-color
-		// site-name
-		// twitter:site
-		if (!this.values["og:site_name"]) this.add("og:site_name", { content: value });
+	image(value: RDFa.Values["og:image"]) {
+		this.add_rdfa("og:image", value);
+		this.add_meta("twitter:image", value);
 		return this;
 	}
-	page(value: string) {
-		// twitter:card
-		// twitter:creator
-		if (!this.values["og:site_name"]) this.add("og:site_name", { content: value });
-		return this;
-	} */
 
 	type({
 		type,
@@ -75,190 +174,239 @@ export class Metadata {
 	}:
 		| {
 				type: "article";
-				params: {
-					authors?: ValueMap["og:article:author"];
-					expiration_time?: ValueMap["og:article:expiration_time"]["content"];
-					modified_time?: ValueMap["og:article:modified_time"]["content"];
-					published_time?: ValueMap["og:article:published_time"]["content"];
-					section?: ValueMap["og:article:section"]["content"];
-					tags?: ValueMap["og:article:tag"];
-				};
+				params: Prettify<{
+					authors?: RDFa.ValueMap["og:article:author"];
+					expiration_time?: RDFa.ValueMap["og:article:expiration_time"];
+					modified_time?: RDFa.ValueMap["og:article:modified_time"];
+					published_time?: RDFa.ValueMap["og:article:published_time"];
+					section?: RDFa.ValueMap["og:article:section"];
+					tags?: RDFa.ValueMap["og:article:tag"];
+				}>;
 		  }
 		| {
 				type: "book";
-				params: {
-					authors?: ValueMap["og:book:author"];
-					isbn?: ValueMap["og:book:isbn"]["content"];
-					release_date?: ValueMap["og:book:release_date"]["content"];
-					tags?: ValueMap["og:book:tag"];
-				};
+				params: Prettify<{
+					authors?: RDFa.ValueMap["og:book:author"];
+					isbn?: RDFa.ValueMap["og:book:isbn"];
+					release_date?: RDFa.ValueMap["og:book:release_date"];
+					tags?: RDFa.ValueMap["og:book:tag"];
+				}>;
 		  }
 		| {
 				type: "music.song";
-				params: {
-					duration?: ValueMap["og:music:duration"]["content"];
-					albums?: ValueMap["og:music:album"];
-					musicians?: ValueMap["og:music:musician"];
-				};
+				params: Prettify<{
+					duration?: RDFa.ValueMap["og:music:duration"];
+					albums?: RDFa.ValueMap["og:music:album"];
+					musicians?: RDFa.ValueMap["og:music:musician"];
+				}>;
 		  }
 		| {
 				type: "music.album";
-				params: {
-					songs?: ValueMap["og:music:song"];
-					musicians?: ValueMap["og:music:musician"];
-					release_date?: ValueMap["og:music:release_date"]["content"];
-				};
+				params: Prettify<{
+					songs?: RDFa.ValueMap["og:music:song"];
+					musicians?: RDFa.ValueMap["og:music:musician"];
+					release_date?: RDFa.ValueMap["og:music:release_date"];
+				}>;
 		  }
 		| {
 				type: "music.playlist";
-				params: {
-					songs?: ValueMap["og:music:song"];
-					creator?: ValueMap["og:music:creator"]["content"];
-				};
+				params: Prettify<{
+					songs?: RDFa.ValueMap["og:music:song"];
+					creator?: RDFa.ValueMap["og:music:creator"];
+				}>;
 		  }
 		| {
 				type: "music.radio_station";
-				params: {
-					creator?: ValueMap["og:music:creator"]["content"];
-				};
+				params: Prettify<{
+					creator?: RDFa.ValueMap["og:music:creator"];
+				}>;
 		  }
 		| {
 				type: "profile";
-				params: {
-					first_name?: ValueMap["og:profile:first_name"]["content"];
-					last_name?: ValueMap["og:profile:last_name"]["content"];
-					username?: ValueMap["og:profile:username"]["content"];
-					gender?: ValueMap["og:profile:gender"]["content"];
-				};
+				params: Prettify<{
+					first_name?: RDFa.ValueMap["og:profile:first_name"];
+					last_name?: RDFa.ValueMap["og:profile:last_name"];
+					username?: RDFa.ValueMap["og:profile:username"];
+					gender?: RDFa.ValueMap["og:profile:gender"];
+				}>;
 		  }
 		| {
 				type: "video.episode";
-				params: {
-					actors?: ValueMap["og:video:actor"];
-					directors?: ValueMap["og:video:director"];
-					writers?: ValueMap["og:video:writer"];
-					duration?: ValueMap["og:video:duration"]["content"];
-					release_date?: ValueMap["og:video:release_date"]["content"];
-					tags?: ValueMap["og:video:tag"];
-					series?: ValueMap["og:video:series"]["content"];
-				};
+				params: Prettify<{
+					actors?: RDFa.ValueMap["og:video:actor"];
+					directors?: RDFa.ValueMap["og:video:director"];
+					writers?: RDFa.ValueMap["og:video:writer"];
+					duration?: RDFa.ValueMap["og:video:duration"];
+					release_date?: RDFa.ValueMap["og:video:release_date"];
+					tags?: RDFa.ValueMap["og:video:tag"];
+					series?: RDFa.ValueMap["og:video:series"];
+				}>;
 		  }
 		| {
 				type: "video.movie";
-				params: {
-					actors?: ValueMap["og:video:actor"];
-					directors?: ValueMap["og:video:director"];
-					writers?: ValueMap["og:video:writer"];
-					duration?: ValueMap["og:video:duration"]["content"];
-					release_date?: ValueMap["og:video:release_date"]["content"];
-					tags?: ValueMap["og:video:tag"];
-				};
+				params: Prettify<{
+					actors?: RDFa.ValueMap["og:video:actor"];
+					directors?: RDFa.ValueMap["og:video:director"];
+					writers?: RDFa.ValueMap["og:video:writer"];
+					duration?: RDFa.ValueMap["og:video:duration"];
+					release_date?: RDFa.ValueMap["og:video:release_date"];
+					tags?: RDFa.ValueMap["og:video:tag"];
+				}>;
 		  }
 		| {
 				type: "video.other";
-				params: {
-					actors?: ValueMap["og:video:actor"];
-					directors?: ValueMap["og:video:director"];
-					writers?: ValueMap["og:video:writer"];
-					duration?: ValueMap["og:video:duration"]["content"];
-					release_date?: ValueMap["og:video:release_date"]["content"];
-					tags?: ValueMap["og:video:tag"];
-				};
+				params: Prettify<{
+					actors?: RDFa.ValueMap["og:video:actor"];
+					directors?: RDFa.ValueMap["og:video:director"];
+					writers?: RDFa.ValueMap["og:video:writer"];
+					duration?: RDFa.ValueMap["og:video:duration"];
+					release_date?: RDFa.ValueMap["og:video:release_date"];
+					tags?: RDFa.ValueMap["og:video:tag"];
+				}>;
 		  }
 		| {
 				type: "video.tv_show";
-				params: {
-					actors?: ValueMap["og:video:actor"];
-					directors?: ValueMap["og:video:director"];
-					writers?: ValueMap["og:video:writer"];
-					duration?: ValueMap["og:video:duration"]["content"];
-					release_date?: ValueMap["og:video:release_date"]["content"];
-					tags?: ValueMap["og:video:tag"];
-				};
+				params: Prettify<{
+					actors?: RDFa.ValueMap["og:video:actor"];
+					directors?: RDFa.ValueMap["og:video:director"];
+					writers?: RDFa.ValueMap["og:video:writer"];
+					duration?: RDFa.ValueMap["og:video:duration"];
+					release_date?: RDFa.ValueMap["og:video:release_date"];
+					tags?: RDFa.ValueMap["og:video:tag"];
+				}>;
 		  }
 		| { type: "website"; params?: object }) {
 		if (type === "article") {
-			if (params.authors) this.add("og:article:author", params.authors);
-			if (params.expiration_time)
-				this.add("og:article:expiration_time", { content: params.expiration_time });
-			if (params.modified_time)
-				this.add("og:article:modified_time", { content: params.modified_time });
-			if (params.published_time)
-				this.add("og:article:published_time", { content: params.published_time });
-			if (params.section) this.add("og:article:section", { content: params.section });
-			if (params.tags) this.add("og:article:tag", params.tags);
+			if (params.authors) {
+				params.authors.forEach((author) => this.add_rdfa("og:article:author", author));
+			}
+			if (params.expiration_time) {
+				this.add_rdfa("og:article:expiration_time", params.expiration_time);
+			}
+			if (params.modified_time) this.add_rdfa("og:article:modified_time", params.modified_time);
+			if (params.published_time) this.add_rdfa("og:article:published_time", params.published_time);
+			if (params.section) this.add_rdfa("og:article:section", params.section);
+			if (params.tags) {
+				params.tags.forEach((tag) => this.add_rdfa("og:article:tag", tag));
+			}
 
 			return this;
 		} else if (type === "book") {
-			if (params.authors) this.add("og:book:author", params.authors);
-			if (params.isbn) this.add("og:book:isbn", { content: params.isbn });
-			if (params.release_date) this.add("og:book:release_date", { content: params.release_date });
-			if (params.tags) this.add("og:book:tag", params.tags);
+			if (params.authors) {
+				params.authors.forEach((author) => this.add_rdfa("og:book:author", author));
+			}
+			if (params.isbn) this.add_rdfa("og:book:isbn", params.isbn);
+			if (params.release_date) this.add_rdfa("og:book:release_date", params.release_date);
+			if (params.tags) {
+				params.tags.forEach((tag) => this.add_rdfa("og:book:tag", tag));
+			}
 
 			return this;
 		} else if (type === "music.song") {
-			if (params.duration) this.add("og:music:duration", { content: params.duration });
-			if (params.albums) this.add("og:music:album", params.albums);
-			if (params.musicians) this.add("og:music:musician", params.musicians);
+			if (params.duration) this.add_rdfa("og:music:duration", params.duration);
+			if (params.albums) {
+				params.albums.forEach((album) => this.add_rdfa("og:music:album", album));
+			}
+			if (params.musicians) {
+				params.musicians.forEach((musician) => this.add_rdfa("og:music:musician", musician));
+			}
 
 			return this;
 		} else if (type === "music.album") {
-			if (params.songs) this.add("og:music:song", params.songs);
-			if (params.musicians) this.add("og:music:musician", params.musicians);
-			if (params.release_date) this.add("og:music:release_date", { content: params.release_date });
+			if (params.songs) {
+				params.songs.forEach((song) => this.add_rdfa("og:music:song", song));
+			}
+			if (params.musicians) {
+				params.musicians.forEach((musician) => this.add_rdfa("og:music:musician", musician));
+			}
+			if (params.release_date) this.add_rdfa("og:music:release_date", params.release_date);
 
 			return this;
 		} else if (type === "music.playlist") {
-			if (params.songs) this.add("og:music:song", params.songs);
-			if (params.creator) this.add("og:music:creator", { content: params.creator });
+			if (params.songs) {
+				params.songs.forEach((song) => this.add_rdfa("og:music:song", song));
+			}
+			if (params.creator) this.add_rdfa("og:music:creator", params.creator);
 
 			return this;
 		} else if (type === "music.radio_station") {
-			if (params.creator) this.add("og:music:creator", { content: params.creator });
+			if (params.creator) this.add_rdfa("og:music:creator", params.creator);
 
 			return this;
 		} else if (type === "profile") {
-			if (params.first_name) this.add("og:profile:first_name", { content: params.first_name });
-			if (params.last_name) this.add("og:profile:last_name", { content: params.last_name });
-			if (params.username) this.add("og:profile:username", { content: params.username });
-			if (params.gender) this.add("og:profile:gender", { content: params.gender });
+			if (params.first_name) this.add_rdfa("og:profile:first_name", params.first_name);
+			if (params.last_name) this.add_rdfa("og:profile:last_name", params.last_name);
+			if (params.username) this.add_rdfa("og:profile:username", params.username);
+			if (params.gender) this.add_rdfa("og:profile:gender", params.gender);
 
 			return this;
 		} else if (type === "video.episode") {
-			if (params.actors) this.add("og:video:actor", params.actors);
-			if (params.directors) this.add("og:video:director", params.directors);
-			if (params.writers) this.add("og:video:writer", params.writers);
-			if (params.duration) this.add("og:video:duration", { content: params.duration });
-			if (params.release_date) this.add("og:video:release_date", { content: params.release_date });
-			if (params.tags) this.add("og:video:tag", params.tags);
-			if (params.series) this.add("og:video:series", { content: params.series });
+			if (params.actors) {
+				params.actors.forEach((actor) => this.add_rdfa("og:video:actor", actor));
+			}
+			if (params.directors) {
+				params.directors.forEach((director) => this.add_rdfa("og:video:director", director));
+			}
+			if (params.writers) {
+				params.writers.forEach((writer) => this.add_rdfa("og:video:writer", writer));
+			}
+			if (params.duration) this.add_rdfa("og:video:duration", params.duration);
+			if (params.release_date) this.add_rdfa("og:video:release_date", params.release_date);
+			if (params.tags) {
+				params.tags.forEach((tag) => this.add_rdfa("og:video:tag", tag));
+			}
+			if (params.series) this.add_rdfa("og:video:series", params.series);
 
 			return this;
 		} else if (type === "video.movie") {
-			if (params.actors) this.add("og:video:actor", params.actors);
-			if (params.directors) this.add("og:video:director", params.directors);
-			if (params.writers) this.add("og:video:writer", params.writers);
-			if (params.duration) this.add("og:video:duration", { content: params.duration });
-			if (params.release_date) this.add("og:video:release_date", { content: params.release_date });
-			if (params.tags) this.add("og:video:tag", params.tags);
+			if (params.actors) {
+				params.actors.forEach((actor) => this.add_rdfa("og:video:actor", actor));
+			}
+			if (params.directors) {
+				params.directors.forEach((director) => this.add_rdfa("og:video:director", director));
+			}
+			if (params.writers) {
+				params.writers.forEach((writer) => this.add_rdfa("og:video:writer", writer));
+			}
+			if (params.duration) this.add_rdfa("og:video:duration", params.duration);
+			if (params.release_date) this.add_rdfa("og:video:release_date", params.release_date);
+			if (params.tags) {
+				params.tags.forEach((tag) => this.add_rdfa("og:video:tag", tag));
+			}
 
 			return this;
 		} else if (type === "video.other") {
-			if (params.actors) this.add("og:video:actor", params.actors);
-			if (params.directors) this.add("og:video:director", params.directors);
-			if (params.writers) this.add("og:video:writer", params.writers);
-			if (params.duration) this.add("og:video:duration", { content: params.duration });
-			if (params.release_date) this.add("og:video:release_date", { content: params.release_date });
-			if (params.tags) this.add("og:video:tag", params.tags);
+			if (params.actors) {
+				params.actors.forEach((actor) => this.add_rdfa("og:video:actor", actor));
+			}
+			if (params.directors) {
+				params.directors.forEach((director) => this.add_rdfa("og:video:director", director));
+			}
+			if (params.writers) {
+				params.writers.forEach((writer) => this.add_rdfa("og:video:writer", writer));
+			}
+			if (params.duration) this.add_rdfa("og:video:duration", params.duration);
+			if (params.release_date) this.add_rdfa("og:video:release_date", params.release_date);
+			if (params.tags) {
+				params.tags.forEach((tag) => this.add_rdfa("og:video:tag", tag));
+			}
 
 			return this;
 		} else if (type === "video.tv_show") {
-			if (params.actors) this.add("og:video:actor", params.actors);
-			if (params.directors) this.add("og:video:director", params.directors);
-			if (params.writers) this.add("og:video:writer", params.writers);
-			if (params.duration) this.add("og:video:duration", { content: params.duration });
-			if (params.release_date) this.add("og:video:release_date", { content: params.release_date });
-			if (params.tags) this.add("og:video:tag", params.tags);
+			if (params.actors) {
+				params.actors.forEach((actor) => this.add_rdfa("og:video:actor", actor));
+			}
+			if (params.directors) {
+				params.directors.forEach((director) => this.add_rdfa("og:video:director", director));
+			}
+			if (params.writers) {
+				params.writers.forEach((writer) => this.add_rdfa("og:video:writer", writer));
+			}
+			if (params.duration) this.add_rdfa("og:video:duration", params.duration);
+			if (params.release_date) this.add_rdfa("og:video:release_date", params.release_date);
+			if (params.tags) {
+				params.tags.forEach((tag) => this.add_rdfa("og:video:tag", tag));
+			}
 
 			return this;
 		} else if (type === "website") {
@@ -268,29 +416,72 @@ export class Metadata {
 		}
 	}
 
-	toConfig() {
-		const configs = values_to_configs(this.values);
-		return configs;
-	}
-	toString() {
-		const configs = values_to_configs(this.values);
-		const html = configs_to_html(configs);
+	site(s: {
+		name: string;
+		theme_color?: Meta.Values["theme-color"];
+		twitter_handle?: Meta.Values["twitter:site"];
+	}) {
+		if (s.name) {
+			this.add_meta("application-name", s.name);
+			this.add_rdfa("og:site_name", s.name);
+		}
 
-		return Object.values(html).join("\n");
+		if (s.theme_color) this.add_meta("theme-color", s.theme_color);
+		if (s.twitter_handle) this.add_meta("twitter:site", s.twitter_handle);
+	}
+	page(p: {
+		title: string;
+		url: URL;
+		description?: string;
+		images?: RDFa.Values["og:image"][];
+		twitter_card?: Meta.Values["twitter:card"];
+		twitter_creator?: Meta.Values["twitter:creator"];
+	}) {
+		this.title(p.title);
+		this.url(p.url);
+		if (p.description) this.description(p.description);
+		if (p.twitter_card) this.add_meta("twitter:card", p.twitter_card);
+		if (p.twitter_creator) this.add_meta("twitter:creator", p.twitter_creator);
+		if (p.images) p.images.forEach((img) => this.image(img));
+		return this;
+	}
+
+	toValues() {
+		return {
+			meta: this.#meta,
+			rdfa: this.#rdfa,
+			script: this.#script,
+		};
+	}
+	toElements() {
+		const meta = to_elements.from_meta(this.#meta);
+		const rdfa = to_elements.from_rdfa(this.#rdfa);
+		const script = to_elements.from_xml(this.#script);
+
+		return [...meta, ...rdfa, ...script];
 	}
 	toHTML() {
-		const configs = values_to_configs(this.values);
-		const html = configs_to_html(configs);
+		const elements = this.toElements();
+		const html = to_html(elements);
 
 		return html;
+	}
+	toString() {
+		const elements = this.toElements();
+		const html = to_html(elements);
+
+		return html.join("\n");
 	}
 }
 
 const meta = new Metadata();
 
-meta.add("application-name", { content: "" });
-
-meta.title("BBC - Home").type({ type: "article", params: { authors: [{ content: new URL("") }] } });
+meta.title("BBC - Home").type({
+	type: "article",
+	params: {
+		authors: [new URL("https://www.bbc.co.uk/")],
+	},
+});
 
 /*
 
