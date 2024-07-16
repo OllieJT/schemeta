@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      schema-dts:
+        specifier: ^1.1.2
+        version: 1.1.2(typescript@5.5.3)
       zod:
         specifier: ^3.23.8
         version: 3.23.8
@@ -51,9 +54,6 @@ importers:
       publint:
         specifier: ^0.2.8
         version: 0.2.8
-      schema-dts:
-        specifier: ^1.1.2
-        version: 1.1.2(typescript@5.5.3)
       tslib:
         specifier: ^2.4.1
         version: 2.6.3
