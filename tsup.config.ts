@@ -10,7 +10,7 @@ export default defineConfig((options) => {
 
 	return {
 		clean: true,
-		entry: ["src/index.ts", "src/metadata.ts", "src/transform.ts", "src/use.ts"],
+		entry: ["src/index.ts", "src/schemeta.ts"],
 		outDir: "dist",
 		onSuccess: debug ? "node dist/index.js" : undefined,
 

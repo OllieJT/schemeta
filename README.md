@@ -11,10 +11,20 @@
   making it easier to leverage standards such as <a href="https://ogp.me">OpenGraph</a>, and <a href="https://json-ld.org">JSON-LD</a>.
 </p>
 
+<div align="center">
+
+[![NPM Version][npm-version-img]][npm-url] [![Downloads][npm-downloads-img]][npm-url] [![GitHub Stars][github-stars-img]][github-url]
+
+</div>
+
 - [Features](#features)
+- [Supported Metadata](#supported-metadata)
 - [Overview](#overview)
   - [Define Data](#define-data)
-  - [Render meta-tags](#render-meta-tags)
+  - [Render meta-tags on the server (optional)](#render-meta-tags-on-the-server-optional)
+    - [Server](#server)
+    - [Option 1: Render HTML on the client](#option-1-render-html-on-the-client)
+    - [Option 2: Initialize Metadata on the client](#option-2-initialize-metadata-on-the-client)
 - [Setup](#setup)
   - [Installation](#installation)
 - [API](#api)
@@ -36,11 +46,24 @@
 - 🟦 Typescript Support
 - ⛓️ Convenient optional-chaining API
 
+## Supported Metadata
+
+Are we missing any? [file an issue](https://github.com/OllieJT/schemeta/issues) to let us know.
+
+| Source    | Type                                                                       | Details                                                                                                                                                                                                                                                                                                                             |
+| --------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| OpenGraph | [RDFa](https://en.wikipedia.org/wiki/RDFa)                                 | [The Open Graph protocol](https://ogp.me)                                                                                                                                                                                                                                                                                           |
+| SchemaOrg | [JSON-LD](https://json-ld.org)                                             | [Schema.Org](https://schema.org/docs/schemas.html)                                                                                                                                                                                                                                                                                  |
+| Microsoft | [Metadata](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta) | [Windows Pinned Sites](<https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/platform-apis/dn255024(v=vs.85)>)                                                                                                                                                                                |
+| Twitter   | [Metadata](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta) | [Twitter Cards](https://developer.x.com/en/docs/twitter-for-websites/cards/guides/getting-started)                                                                                                                                                                                                                                  |
+| Apple     | [Metadata](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta) | [Safari MetaTags](https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html) + [Apple Web Apps](https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html) |
+| Pinterest | [Metadata](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta) | [developers.pinterest.com](https://developers.pinterest.com/docs/web-features/rich-pins-overview/)                                                                                                                                                                                                                                  |
+
 ## Overview
 
 ### Define Data
 
-At it's core, schemeta exposes a class that can be used to define the metadata for a page.
+At it's core, schemeta exposes a class that can be used to define the metadata for a page. Schemeta will automatically handle overriding values that are only expected once (like the page title) or appending values that can appear several times (like images).
 
 ```js
 import { Metadata } from "schemeta";
@@ -61,25 +84,42 @@ metadata
 if (page.profile.photo) {
 	metadata.image({ src: page.profile.photo, alt: page.profile.photo_alt });
 }
+if (page.profile.avatar) {
+	metadata.image({ src: page.profile.avatar, alt: page.profile.avatar_alt });
+}
 ```
 
-### Render meta-tags
+### Render meta-tags on the server (optional)
 
-The metadata can be defined on the server, or the client before transforming the data into a useable format.
+The metadata can be defined on the server before transforming the data into a useable format.
 
 The way you render meta-tags will likely vary based on your framework. We'll use a simple vanilla-js example, but you can find more [examples](#examples) below.
+
+#### Server
 
 ```js
 import { Metadata } from "schemeta";
 
-// Optionally initialize wih metadata from the server
-const metadata = new Metadata(JSON.parse(data.metadata));
+const metadata = new Metadata()
+	.title("My Server-Rendered App")
+	.url("https://github.com/olliejt/schemeta");
 
-// Apply your data
-metadata.title("Ollie's Profile");
+// Option 1: Send HTML code to the client
+const html = metadata.toString();
 
-//Transform your metadata into HTML
-const metadata_html = metadata.toHTML().join("\n");
+// Option 2: Send values to initialize Metadata on the client
+const values = metadata.toValues();
+
+res.send({ html, values });
+```
+
+#### Option 1: Render HTML on the client
+
+```js
+import { Metadata } from "schemeta";
+
+// Recieve values from the server
+const { html } = get_server_data();
 
 /**
  * This example inserts HTML meta tags before the closing </head> tag.
@@ -97,6 +137,21 @@ function render_meta_tags(html) {
 }
 
 render_meta_tags(metadata_html);
+```
+
+#### Option 2: Initialize Metadata on the client
+
+```js
+import { Metadata } from "schemeta";
+
+// Recieve values from the server
+const { values } = get_server_data();
+
+// Option 2: Initialize wih metadata from the server
+const metadata = new Metadata(values).title("My Client-Rendered App");
+
+// Render your html with one of the outputs (.toString() | .toHTML() | .toElements())
+render_meta_tags(metadata.toString());
 ```
 
 ## Setup
@@ -124,20 +179,28 @@ import { Metadata } from "schemeta";
 const metadata = new Metadata();
 
 metadata
-	.site({
-		site_name: "DesignThen",
-		theme_color: "#000000",
-	})
-	.linked_data([
-		{
-			"@type": "WebSite",
-			url: "https://designthen.dev",
-			name: "DesignThen",
-			about: "We solve unique business challenges with bespoke web experiences.",
-			// ...
+	.add({ key: "og:site_name", value: "DesignThen" })
+	.title("The tech stack behind our projects in 2024")
+	.description(
+		"Curious about DesignThen's approach? Gain insights into our design & development philosophy, and the tools shaping our work.",
+	)
+	.type({
+		type: "article",
+		params: {
+			authors: ["Ollie Taylor"],
+			published_time: new Date("2024-02-03T16:00:00Z"),
+			section: "Web Development",
 		},
-	])
-	.twitter({ site_handle: "@designthen" });
+	})
+	.add({
+		key: "application/ld+json",
+		value: {
+			"@type": "Article",
+			author: { "@type": "Person", name: "Ollie Taylor" },
+			headline: "The tech stack behind our projects in 2024",
+			datePublished: "2024-02-03T16:00:00Z",
+		},
+	});
 ```
 
 ## API
@@ -146,24 +209,26 @@ metadata
 
 #### Define
 
-| method                        | tags                                                                                                |
-| ----------------------------- | --------------------------------------------------------------------------------------------------- |
-| `.title(string)`              | `og:title`, `twitter:title`                                                                         |
-| `.description(string)`        | `og:description`, `twitter:description`                                                             |
-| `.canonical(string)`          | `og:url`, `twitter:url`, `canonical`                                                                |
-| `.locale(UseLocale)`          | `og:locale`, `og:locale:alternate[]`                                                                |
-| `.site(UseSite)`              | `og:site_name`, `og:determiner`, `theme-color`                                                      |
-| `.twitter(UseTwitter)`        | `twitter:card`, `twitter:site`, `twitter:creator`                                                   |
-| `.type(UseType)`              | `og:type`, `og:music:*`, `og:video:*`, `og:article:*`, `og:book:*`, `og:profile :*`, `og:website:*` |
-| `.linked_data(UseLinkedData)` | `script` [JSON Linked-Data](https://json-ld.org)                                                    |
+| method                         | Purpose                                                                                      |
+| ------------------------------ | -------------------------------------------------------------------------------------------- |
+| core: `.meta(key, value)`      | Add individual `<meta />` values like OpenGraph                                              |
+| core: `.xml(key, value)`       | Add individual xml like `<title>`, and `<script>` values like [JSON-LD](https://json-ld.org) |
+| helper: `.title(string)`       | Adds several title values like `og:title` & `twitter:title`                                  |
+| helper: `.description(string)` | Adds several description values like `og:description` & `twitter:description`                |
+| helper: `.url(string)`         | Adds several page url values like `og:url` & `canonical`                                     |
+| helper: `.image(params)`       | Adds one image with optional properties like `og:alt` & `og:width`                           |
+| helper: `.type(type, params)`  | Adds `og:type` and optional related OpenGraph values                                         |
+
+We plan to add more helper methods to reduce boilerplate.
 
 #### Render
 
-| method        | output                                               | usecase                                                                                        |
-| ------------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `.get()`      | `MetadataElement[]` Raw data                         | Escape-hatch for rendering meta-tags yourself.                                                 |
-| `.toString()` | `string` Raw data as a JSON string.                  | Useful if you want to build your metadata on the server, and hydrate `Metadata` on the client. |
-| `.toHTML()`   | `string[]` returns the output metadata as html tags. | Recommended method of rendering your meta-tags.                                                |
+| method          | output                                                                          | usecase                                       |
+| --------------- | ------------------------------------------------------------------------------- | --------------------------------------------- |
+| `.toValues()`   | `{ meta: Meta.Values, xml: Xml.Values }`                                        | Values needed to initialize `Metadata`.       |
+| `.toElements()` | `{ element: string; attributes: Record<string, string>; children?: string; }[]` | Enables you to manually render html elements. |
+| `.toHTML()`     | `string[]`                                                                      | Allows you to render each html element.       |
+| `.toString()`   | `string`                                                                        | Allows you to render all html elements.       |
 
 ### Undocumented
 
@@ -182,3 +247,9 @@ TODO
 ### React Example
 
 TODO
+
+[npm-url]: https://www.npmjs.com/package/schemeta
+[npm-downloads-img]: https://img.shields.io/npm/dm/schemeta?color=364fc7&logoColor=364fc7
+[npm-version-img]: https://img.shields.io/npm/v/schemeta?color=0b7285&logoColor=0b7285
+[github-url]: https://github.com/OllieJT/schemeta/stargazers
+[github-stars-img]: https://img.shields.io/github/stars/olliejt/schemeta
