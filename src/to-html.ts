@@ -1,6 +1,6 @@
-import { AnyElementConfig } from "$src/to-elements.types.js";
+import { ValueElement } from "$src/values.js";
 
-function to_attributes(attributes: Record<string, unknown>) {
+function attributes_to_string(attributes: Record<string, unknown>) {
 	return Object.entries(attributes)
 		.map(([key, value]) => {
 			if (value instanceof URL) return `${key}="${value.href}"`;
@@ -10,8 +10,8 @@ function to_attributes(attributes: Record<string, unknown>) {
 		.join(" ");
 }
 
-function element_to_html(data: AnyElementConfig) {
-	const attribs = to_attributes(data.attributes || {});
+function element_to_html(data: ValueElement) {
+	const attribs = attributes_to_string(data.attributes || {});
 
 	if (data.children) {
 		return `<${data.element} ${attribs}>${JSON.stringify(data.children)}</${data.element}>`;
@@ -20,6 +20,6 @@ function element_to_html(data: AnyElementConfig) {
 	}
 }
 
-export function to_html(elements: AnyElementConfig[]) {
+export function to_html(elements: ValueElement[]) {
 	return elements.map(element_to_html);
 }

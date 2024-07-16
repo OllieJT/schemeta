@@ -29,40 +29,40 @@ type TwitterCard = "summary" | "summary_large_image" | "app" | "player";
 type TwitterUsername = `@${string}`;
 type TwitterImage = { src: string; alt?: string };
 
-export type Values = {
-	"application-name": string;
-	title: string;
-	description: string;
-	canonical: URL;
-	"theme-color": HexCode;
+export type Attributes = {
+	"application-name": { content: string };
+	title: { content: string };
+	description: { content: string };
+	canonical: { content: URL };
+	"theme-color": { content: HexCode };
 
 	// Microsoft
-	"msapplication-allowDomainApiCalls": MsBoolean;
-	"msapplication-allowDomainMetaTags": MsBoolean;
-	"msapplication-badge": MsBadge;
-	"msapplication-config": string;
-	"msapplication-navbutton-color": HexCode;
-	"msapplication-notification": MsNotification;
-	"msapplication-square150x150logo": string;
-	"msapplication-square310x310logo": string;
-	"msapplication-square70x70logo": string;
-	"msapplication-starturl": URL;
-	"msapplication-task-separator": string;
-	"msapplication-task": MsTask;
-	"msapplication-TileColor": HexCode;
-	"msapplication-TileImage": string;
-	"msapplication-tooltip": string;
-	"msapplication-wide310x150logo": string;
-	"msapplication-window": MsWindow;
+	"msapplication-allowDomainApiCalls": { content: MsBoolean };
+	"msapplication-allowDomainMetaTags": { content: MsBoolean };
+	"msapplication-badge": { content: MsBadge };
+	"msapplication-config": { content: string };
+	"msapplication-navbutton-color": { content: HexCode };
+	"msapplication-notification": { content: MsNotification };
+	"msapplication-square150x150logo": { content: string };
+	"msapplication-square310x310logo": { content: string };
+	"msapplication-square70x70logo": { content: string };
+	"msapplication-starturl": { content: URL };
+	"msapplication-task-separator": { content: string };
+	"msapplication-task": { content: MsTask };
+	"msapplication-TileColor": { content: HexCode };
+	"msapplication-TileImage": { content: string };
+	"msapplication-tooltip": { content: string };
+	"msapplication-wide310x150logo": { content: string };
+	"msapplication-window": { content: MsWindow };
 
 	// Twitter
-	"twitter:card": TwitterCard;
-	"twitter:creator": TwitterUsername;
-	"twitter:description": string;
-	"twitter:image": TwitterImage;
-	"twitter:site": TwitterUsername;
-	"twitter:title": string;
-	"twitter:url": URL;
+	"twitter:card": { content: TwitterCard };
+	"twitter:creator": { content: TwitterUsername };
+	"twitter:description": { content: string };
+	"twitter:image": { content: TwitterImage };
+	"twitter:site": { content: TwitterUsername };
+	"twitter:title": { content: string };
+	"twitter:url": { content: URL };
 
 	// Pinterest
 	pinterest: { content: "nopin" | "nohover"; description: "nopin" };
@@ -78,7 +78,7 @@ export type Values = {
 };
 
 export type ValueMap = PickArrayLike<
-	Values,
+	Attributes,
 	"msapplication-task" | "twitter:image" | "apple-touch-icon"
 >;
 

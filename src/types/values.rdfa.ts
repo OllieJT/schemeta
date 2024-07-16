@@ -2,7 +2,7 @@ import { PickArrayLike } from "$src/types/utility.js";
 
 // OpenGraph Utility Types
 type OgImage = {
-	src: string;
+	content: URL;
 	alt?: string;
 	width?: number;
 	height?: number;
@@ -10,73 +10,74 @@ type OgImage = {
 	secure_url?: string;
 };
 
-type OgMusicSong = { href: URL; disc: number; track: number };
-type OgMusicAlbum = { href: URL; disc: number; track: number };
-type OgVideoActor = { href: URL; role: string };
+type OgMusicSong = { content: URL; disc?: number; track?: number };
+type OgMusicAlbum = { content: URL; disc?: number; track?: number };
+type OgVideoActor = { content: URL; role?: string };
+type OgType =
+	| "article"
+	| "book"
+	| "music.song"
+	| "music.album"
+	| "music.playlist"
+	| "music.radio_station"
+	| "profile"
+	| "video.episode"
+	| "video.movie"
+	| "video.other"
+	| "video.tv_show"
+	| "website";
 
-export type Values = {
+export type Attributes = {
 	// OpenGraph
-	"og:site_name": string;
-	"og:determiner": string;
-	"og:title": string;
-	"og:description": string;
-	"og:image": OgImage;
-	"og:locale": string;
-	"og:locale:alternate": string;
-	"og:url": URL;
-	"og:audio": URL;
-	"og:video": URL;
-	// OpenGraph Types
-	"og:type":
-		| "article"
-		| "book"
-		| "music.song"
-		| "music.album"
-		| "music.playlist"
-		| "music.radio_station"
-		| "profile"
-		| "video.episode"
-		| "video.movie"
-		| "video.other"
-		| "video.tv_show"
-		| "website";
+	"og:site_name": { content: string };
+	"og:determiner": { content: string };
+	"og:title": { content: string };
+	"og:description": { content: string };
+	"og:image": { content: OgImage };
+	"og:locale": { content: string };
+	"og:locale:alternate": { content: string };
+	"og:url": { content: URL };
+	"og:audio": { content: URL };
+	"og:video": { content: URL };
 
+	// OpenGraph Types
+	"og:type": { content: OgType };
 	// type=music
-	"music:duration": number;
+	"music:duration": { content: number };
 	"music:album": OgMusicAlbum;
-	"music:musician": URL;
+	"music:musician": { content: URL };
 	"music:song": OgMusicSong;
-	"music:release_date": Date;
-	"music:creator": URL;
+	"music:release_date": { content: Date };
+	"music:creator": { content: URL };
 	// type=video
 	"video:actor": OgVideoActor;
-	"video:director": URL;
-	"video:duration": number;
-	"video:release_date": Date;
-	"video:tag": string;
-	"video:series": URL;
-	"video:writer": URL;
+	"video:director": { content: URL };
+	"video:duration": { content: number };
+	"video:release_date": { content: Date };
+	"video:tag": { content: string };
+	"video:series": { content: URL };
+	"video:writer": { content: URL };
 	// type=article
-	"article:author": URL;
-	"article:expiration_time": Date;
-	"article:modified_time": Date;
-	"article:published_time": Date;
-	"article:section": string;
-	"article:tag": string;
+	"article:author": { content: URL };
+	"article:expiration_time": { content: Date };
+	"article:modified_time": { content: Date };
+	"article:published_time": { content: Date };
+	"article:section": { content: string };
+	"article:tag": { content: string };
 	// type=book
-	"book:author": URL;
-	"book:isbn": string;
-	"book:release_date": Date;
-	"book:tag": string;
+	"book:author": { content: URL };
+	"book:isbn": { content: string };
+	"book:release_date": { content: Date };
+	"book:tag": { content: string };
 	// type=profile
-	"profile:first_name": string;
-	"profile:gender": string;
-	"profile:last_name": string;
-	"profile:username": string;
+	"profile:first_name": { content: string };
+	"profile:gender": { content: string };
+	"profile:last_name": { content: string };
+	"profile:username": { content: string };
 };
 
 export type ValueMap = PickArrayLike<
-	Values,
+	Attributes,
 	| "og:image"
 	| "og:locale:alternate"
 	| "music:album"
