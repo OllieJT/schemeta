@@ -11,23 +11,28 @@
   making it easier to leverage standards such as <a href="https://ogp.me">OpenGraph</a>, and <a href="https://json-ld.org">JSON-LD</a>.
 </p>
 
+<div align="center">
+
+[![NPM Version][npm-version-img]][npm-url] [![Downloads][npm-downloads-img]][npm-url] [![GitHub Stars][github-stars-img]][github-url]
+
+</div>
+
 - [Features](#features)
+- [Supported Metadata](#supported-metadata)
 - [Overview](#overview)
-  - [Define Data](#define-data)
-  - [Render meta-tags](#render-meta-tags)
+	- [Define Data](#define-data)
+	- [Render meta-tags](#render-meta-tags)
 - [Setup](#setup)
-  - [Installation](#installation)
+	- [Installation](#installation)
 - [API](#api)
-  - [`new Metadata()`](#new-metadata)
-    - [Define](#define)
-    - [Render](#render)
-  - [Undocumented](#undocumented)
+	- [`new Metadata()`](#new-metadata)
+		- [Define](#define)
+		- [Render](#render)
+	- [Undocumented](#undocumented)
 - [Examples](#examples)
-  - [Vanilla Example](#vanilla-example)
-  - [Svelte Example](#svelte-example)
-  - [React Example](#react-example)
-- [Reference](#reference)
-  - [Metadata Sources](#metadata-sources)
+	- [Vanilla Example](#vanilla-example)
+	- [Svelte Example](#svelte-example)
+	- [React Example](#react-example)
 
 ## Features
 
@@ -37,6 +42,19 @@
 - 🙅‍♂️ No runtime dependensies
 - 🟦 Typescript Support
 - ⛓️ Convenient optional-chaining API
+
+## Supported Metadata
+
+Are we missing any? [file an issue](https://github.com/OllieJT/schemeta/issues) to let us know.
+
+| Source    | Type                                                                       | Details                                                                                                                                                                                                                                                                                                                             |
+| --------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| OpenGraph | [RDFa](https://en.wikipedia.org/wiki/RDFa)                                 | [The Open Graph protocol](https://ogp.me)                                                                                                                                                                                                                                                                                           |
+| SchemaOrg | [JSON-LD](https://json-ld.org)                                             | [Schema.Org](https://schema.org/docs/schemas.html)                                                                                                                                                                                                                                                                                  |
+| Microsoft | [Metadata](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta) | [Windows Pinned Sites](<https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/platform-apis/dn255024(v=vs.85)>)                                                                                                                                                                                |
+| Twitter   | [Metadata](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta) | [Twitter Cards](https://developer.x.com/en/docs/twitter-for-websites/cards/guides/getting-started)                                                                                                                                                                                                                                  |
+| Apple     | [Metadata](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta) | [Safari MetaTags](https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html) + [Apple Web Apps](https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html) |
+| Pinterest | [Metadata](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta) | [developers.pinterest.com](https://developers.pinterest.com/docs/web-features/rich-pins-overview/)                                                                                                                                                                                                                                  |
 
 ## Overview
 
@@ -185,8 +203,8 @@ TODO
 
 TODO
 
-## Reference
-
-### Metadata Sources
-
-- Microsoft: [Metadata Reference](<https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/platform-apis/dn255024(v=vs.85)#msapplication-tilecolor>)
+[npm-url]: https://www.npmjs.com/package/schemeta
+[npm-downloads-img]: https://img.shields.io/npm/dm/schemeta?color=364fc7&logoColor=364fc7
+[npm-version-img]: https://img.shields.io/npm/v/schemeta?color=0b7285&logoColor=0b7285
+[github-url]: https://github.com/OllieJT/schemeta/stargazers
+[github-stars-img]: https://img.shields.io/github/stars/olliejt/schemeta

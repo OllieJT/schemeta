@@ -424,6 +424,7 @@ export class Metadata {
 		if (s.name) {
 			this.add_meta("application-name", s.name);
 			this.add_rdfa("og:site_name", s.name);
+			this.add_meta("apple-mobile-web-app-title", { content: s.name });
 		}
 
 		if (s.theme_color) this.add_meta("theme-color", s.theme_color);

@@ -63,9 +63,24 @@ export type Values = {
 	"twitter:site": TwitterUsername;
 	"twitter:title": string;
 	"twitter:url": URL;
+
+	// Pinterest
+	pinterest: { content: "nopin" | "nohover"; description: "nopin" };
+	"pinterest-rich-pin": "true" | "false";
+
+	// Apple
+	"apple-mobile-web-app-capable": "yes" | "no";
+	"apple-mobile-web-app-status-bar-style": "default" | "black" | "black-translucent";
+	"format-detection": "telephone=no";
+	"apple-touch-startup-image": { href: string };
+	"apple-touch-icon": { href: string; sizes: string }; // TODO: Link
+	"apple-mobile-web-app-title": { content: string };
 };
 
-export type ValueMap = PickArrayLike<Values, "msapplication-task" | "twitter:image">;
+export type ValueMap = PickArrayLike<
+	Values,
+	"msapplication-task" | "twitter:image" | "apple-touch-icon"
+>;
 
 export type Properties<
 	Name extends string | undefined = string | undefined,
@@ -77,6 +92,7 @@ export type Properties<
 			name: string;
 			"http-equiv"?: never;
 			content: Content;
+			description?: string;
 		}
 	: {
 			name?: never;
@@ -87,6 +103,7 @@ export type Properties<
 				| "x-ua-compatible"
 				| "refresh";
 			content: string;
+			description?: string;
 		});
 
 export type Elements = Properties[];

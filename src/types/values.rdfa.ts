@@ -42,54 +42,54 @@ export type Values = {
 		| "website";
 
 	// type=music
-	"og:music:duration": number;
-	"og:music:album": OgMusicAlbum;
-	"og:music:musician": URL;
-	"og:music:song": OgMusicSong;
-	"og:music:release_date": Date;
-	"og:music:creator": URL;
+	"music:duration": number;
+	"music:album": OgMusicAlbum;
+	"music:musician": URL;
+	"music:song": OgMusicSong;
+	"music:release_date": Date;
+	"music:creator": URL;
 	// type=video
-	"og:video:actor": OgVideoActor;
-	"og:video:director": URL;
-	"og:video:duration": number;
-	"og:video:release_date": Date;
-	"og:video:tag": string;
-	"og:video:series": URL;
-	"og:video:writer": URL;
+	"video:actor": OgVideoActor;
+	"video:director": URL;
+	"video:duration": number;
+	"video:release_date": Date;
+	"video:tag": string;
+	"video:series": URL;
+	"video:writer": URL;
 	// type=article
-	"og:article:author": URL;
-	"og:article:expiration_time": Date;
-	"og:article:modified_time": Date;
-	"og:article:published_time": Date;
-	"og:article:section": string;
-	"og:article:tag": string;
+	"article:author": URL;
+	"article:expiration_time": Date;
+	"article:modified_time": Date;
+	"article:published_time": Date;
+	"article:section": string;
+	"article:tag": string;
 	// type=book
-	"og:book:author": URL;
-	"og:book:isbn": string;
-	"og:book:release_date": Date;
-	"og:book:tag": string;
+	"book:author": URL;
+	"book:isbn": string;
+	"book:release_date": Date;
+	"book:tag": string;
 	// type=profile
-	"og:profile:first_name": string;
-	"og:profile:gender": string;
-	"og:profile:last_name": string;
-	"og:profile:username": string;
+	"profile:first_name": string;
+	"profile:gender": string;
+	"profile:last_name": string;
+	"profile:username": string;
 };
 
 export type ValueMap = PickArrayLike<
 	Values,
 	| "og:image"
 	| "og:locale:alternate"
-	| "og:music:album"
-	| "og:music:musician"
-	| "og:music:song"
-	| "og:video:actor"
-	| "og:video:director"
-	| "og:video:tag"
-	| "og:video:writer"
-	| "og:article:author"
-	| "og:article:tag"
-	| "og:book:author"
-	| "og:book:tag"
+	| "music:album"
+	| "music:musician"
+	| "music:song"
+	| "video:actor"
+	| "video:director"
+	| "video:tag"
+	| "video:writer"
+	| "article:author"
+	| "article:tag"
+	| "book:author"
+	| "book:tag"
 >;
 
 export type Properties<Property extends string = string, Content extends string = string> = {

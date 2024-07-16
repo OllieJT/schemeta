@@ -68,6 +68,17 @@ export function from_meta(values: Meta.ValueMap): MetaElement[] {
 					content: msapplication_string(msapplication_window),
 				},
 			});
+		} else if (key === "pinterest") {
+			const pinterest = values[key];
+			if (!pinterest) return console.warn(`No value for ${key}`);
+			elements.push({
+				element: "meta",
+				attributes: {
+					name: "msapplication-window",
+					content: pinterest.content,
+					description: pinterest.description,
+				},
+			});
 		} else {
 			const value = values[key];
 			if (!value) return console.warn(`No value for ${key}`);
