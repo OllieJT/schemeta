@@ -1,4 +1,4 @@
-import type { Json } from "$src/types/tags.js";
+import type { Json } from "$src/types/tags.json.js";
 
 export function use_json_ld(data: Json.LinkedDataValue[]): Json.LD[] {
 	const elements: Json.LD[] = [];

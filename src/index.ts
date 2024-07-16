@@ -1,3 +1,3 @@
-import { Metadata } from "./metadata.js";
+import { Metadata } from "./schemeta.js";
 
 export { Metadata };

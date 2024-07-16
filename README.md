@@ -13,19 +13,21 @@
 
 - [Features](#features)
 - [Overview](#overview)
-  - [Define Data](#define-data)
-  - [Render meta-tags](#render-meta-tags)
+	- [Define Data](#define-data)
+	- [Render meta-tags](#render-meta-tags)
 - [Setup](#setup)
-  - [Installation](#installation)
+	- [Installation](#installation)
 - [API](#api)
-  - [`new Metadata()`](#new-metadata)
-    - [Define](#define)
-    - [Render](#render)
-  - [Undocumented](#undocumented)
+	- [`new Metadata()`](#new-metadata)
+		- [Define](#define)
+		- [Render](#render)
+	- [Undocumented](#undocumented)
 - [Examples](#examples)
-  - [Vanilla Example](#vanilla-example)
-  - [Svelte Example](#svelte-example)
-  - [React Example](#react-example)
+	- [Vanilla Example](#vanilla-example)
+	- [Svelte Example](#svelte-example)
+	- [React Example](#react-example)
+- [Reference](#reference)
+	- [Metadata Sources](#metadata-sources)
 
 ## Features
 
@@ -182,3 +184,9 @@ TODO
 ### React Example
 
 TODO
+
+## Reference
+
+### Metadata Sources
+
+- Microsoft: [Metadata Reference](<https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/platform-apis/dn255024(v=vs.85)#msapplication-tilecolor>)
