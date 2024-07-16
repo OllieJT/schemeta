@@ -91,7 +91,7 @@ export class Metadata {
 	}
 
 	// Add Values
-	add_meta<Key extends keyof Meta.OptionInput>(key: Key, input: Meta.OptionInput[Key]) {
+	meta<Key extends keyof Meta.OptionInput>(key: Key, input: Meta.OptionInput[Key]) {
 		const output = meta.option[key].parse(input);
 
 		if (Array.isArray(this.#meta_values[key])) {
@@ -110,7 +110,7 @@ export class Metadata {
 		return this;
 	}
 
-	add_xml<Key extends keyof Xml.OptionInput>(key: Key, input: Xml.OptionInput[Key]) {
+	xml<Key extends keyof Xml.OptionInput>(key: Key, input: Xml.OptionInput[Key]) {
 		const output = xml.option[key].parse(input);
 
 		if (Array.isArray(this.#xml_values[key])) {
@@ -129,33 +129,16 @@ export class Metadata {
 		return this;
 	}
 
-	add<Key extends keyof Meta.OptionInput | keyof Xml.OptionInput>({
-		key,
-		value,
-	}: Key extends keyof Meta.OptionInput
-		? { key: Key; value: Meta.OptionInput[Key] }
-		: Key extends keyof Xml.OptionInput
-			? { key: Key; value: Xml.OptionInput[Key] }
-			: never) {
-		if (key in this.#meta_values) {
-			const k = key as keyof Meta.OptionInput;
-			this.add_meta(k, value as Meta.OptionInput[typeof k]);
-		} else if (key in this.#xml_values) {
-			const k = key as keyof Xml.OptionInput;
-			this.add_xml(k, value as Xml.OptionInput[typeof k]);
-		}
-	}
-
 	title(content: string) {
-		this.add_xml("title", content);
-		this.add_meta("og:title", content);
-		this.add_meta("twitter:title", content);
+		this.xml("title", content);
+		this.meta("og:title", content);
+		this.meta("twitter:title", content);
 		return this;
 	}
 	description(content: string) {
-		this.add_meta("description", content);
-		this.add_meta("og:description", content);
-		this.add_meta("twitter:description", content);
+		this.meta("description", content);
+		this.meta("og:description", content);
+		this.meta("twitter:description", content);
 		return this;
 	}
 	url(content: string) {
@@ -163,10 +146,10 @@ export class Metadata {
 		canonical.hash = "";
 		canonical.search = "";
 
-		this.add_meta("canonical", canonical.href);
-		this.add_meta("og:url", content);
-		this.add_meta("twitter:url", content);
-		this.add_meta("msapplication-starturl", content);
+		this.meta("canonical", canonical.href);
+		this.meta("og:url", content);
+		this.meta("twitter:url", content);
+		this.meta("msapplication-starturl", content);
 		return this;
 	}
 
@@ -178,8 +161,8 @@ export class Metadata {
 		type?: string;
 		secure_url?: string;
 	}) {
-		this.add_meta("og:image", img);
-		this.add_meta("twitter:image", img);
+		this.meta("og:image", img);
+		this.meta("twitter:image", img);
 		return this;
 	}
 
@@ -293,140 +276,140 @@ export class Metadata {
 		| { type: "website"; params?: object }) {
 		if (type === "article") {
 			if (params.authors) {
-				params.authors.forEach((content) => this.add_meta("article:author", content));
+				params.authors.forEach((content) => this.meta("article:author", content));
 			}
 			if (params.expiration_time) {
-				this.add_meta("article:expiration_time", params.expiration_time);
+				this.meta("article:expiration_time", params.expiration_time);
 			}
 			if (params.modified_time) {
-				this.add_meta("article:modified_time", params.modified_time);
+				this.meta("article:modified_time", params.modified_time);
 			}
 			if (params.published_time) {
-				this.add_meta("article:published_time", params.published_time);
+				this.meta("article:published_time", params.published_time);
 			}
 			if (params.section) {
-				this.add_meta("article:section", params.section);
+				this.meta("article:section", params.section);
 			}
 			if (params.tags) {
-				params.tags.forEach((tag) => this.add_meta("article:tag", tag));
+				params.tags.forEach((tag) => this.meta("article:tag", tag));
 			}
 
 			return this;
 		} else if (type === "book") {
 			if (params.authors) {
-				params.authors.forEach((content) => this.add_meta("book:author", content));
+				params.authors.forEach((content) => this.meta("book:author", content));
 			}
-			if (params.isbn) this.add_meta("book:isbn", params.isbn);
-			if (params.release_date) this.add_meta("book:release_date", params.release_date);
+			if (params.isbn) this.meta("book:isbn", params.isbn);
+			if (params.release_date) this.meta("book:release_date", params.release_date);
 			if (params.tags) {
-				params.tags.forEach((content) => this.add_meta("book:tag", content));
+				params.tags.forEach((content) => this.meta("book:tag", content));
 			}
 
 			return this;
 		} else if (type === "music.song") {
-			if (params.duration) this.add_meta("music:duration", params.duration);
+			if (params.duration) this.meta("music:duration", params.duration);
 			if (params.albums) {
-				params.albums.forEach((content) => this.add_meta("music:album", content));
+				params.albums.forEach((content) => this.meta("music:album", content));
 			}
 			if (params.musicians) {
-				params.musicians.forEach((content) => this.add_meta("music:musician", content));
+				params.musicians.forEach((content) => this.meta("music:musician", content));
 			}
 
 			return this;
 		} else if (type === "music.album") {
 			if (params.songs) {
-				params.songs.forEach((content) => this.add_meta("music:song", content));
+				params.songs.forEach((content) => this.meta("music:song", content));
 			}
 			if (params.musicians) {
-				params.musicians.forEach((content) => this.add_meta("music:musician", content));
+				params.musicians.forEach((content) => this.meta("music:musician", content));
 			}
-			if (params.release_date) this.add_meta("music:release_date", params.release_date);
+			if (params.release_date) this.meta("music:release_date", params.release_date);
 
 			return this;
 		} else if (type === "music.playlist") {
 			if (params.songs) {
-				params.songs.forEach((content) => this.add_meta("music:song", content));
+				params.songs.forEach((content) => this.meta("music:song", content));
 			}
-			if (params.creator) this.add_meta("music:creator", params.creator);
+			if (params.creator) this.meta("music:creator", params.creator);
 
 			return this;
 		} else if (type === "music.radio_station") {
-			if (params.creator) this.add_meta("music:creator", params.creator);
+			if (params.creator) this.meta("music:creator", params.creator);
 
 			return this;
 		} else if (type === "profile") {
-			if (params.first_name) this.add_meta("profile:first_name", params.first_name);
-			if (params.last_name) this.add_meta("profile:last_name", params.last_name);
-			if (params.username) this.add_meta("profile:username", params.username);
-			if (params.gender) this.add_meta("profile:gender", params.gender);
+			if (params.first_name) this.meta("profile:first_name", params.first_name);
+			if (params.last_name) this.meta("profile:last_name", params.last_name);
+			if (params.username) this.meta("profile:username", params.username);
+			if (params.gender) this.meta("profile:gender", params.gender);
 
 			return this;
 		} else if (type === "video.episode") {
 			if (params.actors) {
-				params.actors.forEach((content) => this.add_meta("video:actor", content));
+				params.actors.forEach((content) => this.meta("video:actor", content));
 			}
 			if (params.directors) {
-				params.directors.forEach((content) => this.add_meta("video:director", content));
+				params.directors.forEach((content) => this.meta("video:director", content));
 			}
 			if (params.writers) {
-				params.writers.forEach((content) => this.add_meta("video:writer", content));
+				params.writers.forEach((content) => this.meta("video:writer", content));
 			}
-			if (params.duration) this.add_meta("video:duration", params.duration);
-			if (params.release_date) this.add_meta("video:release_date", params.release_date);
+			if (params.duration) this.meta("video:duration", params.duration);
+			if (params.release_date) this.meta("video:release_date", params.release_date);
 			if (params.tags) {
-				params.tags.forEach((content) => this.add_meta("video:tag", content));
+				params.tags.forEach((content) => this.meta("video:tag", content));
 			}
-			if (params.series) this.add_meta("video:series", params.series);
+			if (params.series) this.meta("video:series", params.series);
 
 			return this;
 		} else if (type === "video.movie") {
 			if (params.actors) {
-				params.actors.forEach((content) => this.add_meta("video:actor", content));
+				params.actors.forEach((content) => this.meta("video:actor", content));
 			}
 			if (params.directors) {
-				params.directors.forEach((content) => this.add_meta("video:director", content));
+				params.directors.forEach((content) => this.meta("video:director", content));
 			}
 			if (params.writers) {
-				params.writers.forEach((content) => this.add_meta("video:writer", content));
+				params.writers.forEach((content) => this.meta("video:writer", content));
 			}
-			if (params.duration) this.add_meta("video:duration", params.duration);
-			if (params.release_date) this.add_meta("video:release_date", params.release_date);
+			if (params.duration) this.meta("video:duration", params.duration);
+			if (params.release_date) this.meta("video:release_date", params.release_date);
 			if (params.tags) {
-				params.tags.forEach((content) => this.add_meta("video:tag", content));
+				params.tags.forEach((content) => this.meta("video:tag", content));
 			}
 
 			return this;
 		} else if (type === "video.other") {
 			if (params.actors) {
-				params.actors.forEach((content) => this.add_meta("video:actor", content));
+				params.actors.forEach((content) => this.meta("video:actor", content));
 			}
 			if (params.directors) {
-				params.directors.forEach((content) => this.add_meta("video:director", content));
+				params.directors.forEach((content) => this.meta("video:director", content));
 			}
 			if (params.writers) {
-				params.writers.forEach((content) => this.add_meta("video:writer", content));
+				params.writers.forEach((content) => this.meta("video:writer", content));
 			}
-			if (params.duration) this.add_meta("video:duration", params.duration);
-			if (params.release_date) this.add_meta("video:release_date", params.release_date);
+			if (params.duration) this.meta("video:duration", params.duration);
+			if (params.release_date) this.meta("video:release_date", params.release_date);
 			if (params.tags) {
-				params.tags.forEach((content) => this.add_meta("video:tag", content));
+				params.tags.forEach((content) => this.meta("video:tag", content));
 			}
 
 			return this;
 		} else if (type === "video.tv_show") {
 			if (params.actors) {
-				params.actors.forEach((content) => this.add_meta("video:actor", content));
+				params.actors.forEach((content) => this.meta("video:actor", content));
 			}
 			if (params.directors) {
-				params.directors.forEach((content) => this.add_meta("video:director", content));
+				params.directors.forEach((content) => this.meta("video:director", content));
 			}
 			if (params.writers) {
-				params.writers.forEach((content) => this.add_meta("video:writer", content));
+				params.writers.forEach((content) => this.meta("video:writer", content));
 			}
-			if (params.duration) this.add_meta("video:duration", params.duration);
-			if (params.release_date) this.add_meta("video:release_date", params.release_date);
+			if (params.duration) this.meta("video:duration", params.duration);
+			if (params.release_date) this.meta("video:release_date", params.release_date);
 			if (params.tags) {
-				params.tags.forEach((content) => this.add_meta("video:tag", content));
+				params.tags.forEach((content) => this.meta("video:tag", content));
 			}
 
 			return this;
@@ -463,12 +446,28 @@ export class Metadata {
 	}
 }
 
-const schemeta = new Metadata();
+const metadata = new Metadata();
 
-schemeta.title("BBC - Home").type({
-	type: "article",
-	params: {},
-});
+metadata
+	.meta("og:site_name", "DesignThen")
+	.title("The tech stack behind our projects in 2024")
+	.description(
+		"Curious about DesignThen's approach? Gain insights into our design & development philosophy, and the tools shaping our work.",
+	)
+	.type({
+		type: "article",
+		params: {
+			authors: ["Ollie Taylor"],
+			published_time: new Date("2024-02-03T16:00:00Z"),
+			section: "Web Development",
+		},
+	})
+	.xml("application/ld+json", {
+		"@type": "Article",
+		author: { "@type": "Person", name: "Ollie Taylor" },
+		headline: "The tech stack behind our projects in 2024",
+		datePublished: "2024-02-03T16:00:00Z",
+	});
 
 /*
 
