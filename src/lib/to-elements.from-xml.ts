@@ -1,6 +1,6 @@
-import { Meta, ValueElement } from "$src/values.js";
+import { ValueElement, Xml } from "$src/lib/values.js";
 
-export function from_meta(values: Meta.Values): ValueElement[] {
+export function from_xml(values: Xml.Values): ValueElement[] {
 	const elements: ValueElement[] = [];
 
 	Object.values(values).forEach((value) => {

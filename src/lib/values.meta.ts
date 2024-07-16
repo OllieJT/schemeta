@@ -1,5 +1,5 @@
-import { PickArrayLike } from "$src/types/utility.js";
-import { ValueElement } from "$src/values.types.js";
+import { PickArrayLike } from "$src/lib/types.js";
+import { ValueElement } from "$src/lib/values.types.js";
 import { z } from "zod";
 
 const hex_code = z.custom<`#${string}`>(

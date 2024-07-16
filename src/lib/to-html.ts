@@ -1,4 +1,4 @@
-import { ValueElement } from "$src/values.js";
+import { ValueElement } from "$src/lib/values.js";
 
 function attributes_to_string(attributes: Record<string, unknown>) {
 	return Object.entries(attributes)

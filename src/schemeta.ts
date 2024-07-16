@@ -1,7 +1,7 @@
-import { to_elements } from "$src/to-elements.js";
-import { to_html } from "$src/to-html.js";
-import { Prettify } from "$src/types/utility.js";
-import { Meta, meta, Xml, xml } from "$src/values.js";
+import { to_elements } from "$src/lib/to-elements.js";
+import { to_html } from "$src/lib/to-html.js";
+import { Prettify } from "$src/lib/types.js";
+import { Meta, meta, Xml, xml } from "$src/lib/values.js";
 
 export class Metadata {
 	#meta_values: Meta.Values = {
@@ -463,9 +463,9 @@ export class Metadata {
 	}
 }
 
-const demo = new Metadata();
+const schemeta = new Metadata();
 
-demo.title("BBC - Home").type({
+schemeta.title("BBC - Home").type({
 	type: "article",
 	params: {},
 });
