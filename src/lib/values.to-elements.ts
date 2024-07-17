@@ -1,6 +1,6 @@
-import { ValueElement, Xml } from "$src/lib/values.js";
+import { ValueElement, Values } from "$src/lib/values.types.js";
 
-export function from_xml(values: Xml.Values): ValueElement[] {
+export function values_to_elements(values: Values): ValueElement[] {
 	const elements: ValueElement[] = [];
 
 	Object.values(values).forEach((value) => {
