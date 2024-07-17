@@ -308,15 +308,13 @@ export const value_option = {
 				attributes: { rel: "apple-touch-icon", href: content.href, sizes: content.sizes },
 			}) satisfies ValueElement,
 	),
-	"apple-mobile-web-app-title": z
-		.string()
-		.transform(
-			(content) =>
-				({
-					element: "meta",
-					attributes: { name: "apple-mobile-web-app-title", content },
-				}) satisfies ValueElement,
-		),
+	"apple-mobile-web-app-title": z.string().transform(
+		(content) =>
+			({
+				element: "meta",
+				attributes: { name: "apple-mobile-web-app-title", content },
+			}) satisfies ValueElement,
+	),
 	"apple-touch-fullscreen": yes_or_no.transform(
 		(content) =>
 			({
@@ -326,15 +324,13 @@ export const value_option = {
 	),
 
 	// OpenGraph - og:*
-	"og:site_name": z
-		.string()
-		.transform(
-			(content) =>
-				({
-					element: "meta",
-					attributes: { property: "og:site_name", content },
-				}) satisfies ValueElement,
-		),
+	"og:site_name": z.string().transform(
+		(content) =>
+			({
+				element: "meta",
+				attributes: { property: "og:site_name", content },
+			}) satisfies ValueElement,
+	),
 	"og:determiner": z.string().transform(
 		(content) =>
 			({
