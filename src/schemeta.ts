@@ -6,16 +6,16 @@ export type MetadataValues = Values;
 export type MetadataInitialValues = Partial<Values>;
 
 export class Metadata {
-	#raw_values: MetadataValues = {
-		title: undefined,
-		bookmark: undefined,
-		"application/ld+json": [],
+	#values: MetadataValues = {
 		"application-name": undefined,
-		description: undefined,
-		canonical: undefined,
-		"theme-color": undefined,
-		"apple-touch-fullscreen": undefined,
+		"application/ld+json": [],
 		"color-scheme": undefined,
+		"theme-color": undefined,
+		bookmark: undefined,
+		canonical: undefined,
+		description: undefined,
+		title: undefined,
+
 		"msapplication-allowDomainApiCalls": undefined,
 		"msapplication-allowDomainMetaTags": undefined,
 		"msapplication-badge": undefined,
@@ -33,6 +33,7 @@ export class Metadata {
 		"msapplication-tooltip": undefined,
 		"msapplication-wide310x150logo": undefined,
 		"msapplication-window": undefined,
+
 		"twitter:card": undefined,
 		"twitter:creator": undefined,
 		"twitter:description": undefined,
@@ -40,6 +41,7 @@ export class Metadata {
 		"twitter:site": undefined,
 		"twitter:title": undefined,
 		"twitter:url": undefined,
+
 		"og:site_name": undefined,
 		"og:determiner": undefined,
 		"og:title": undefined,
@@ -51,19 +53,6 @@ export class Metadata {
 		"og:audio": undefined,
 		"og:video": undefined,
 		"og:type": undefined,
-		"music:duration": undefined,
-		"music:album": [],
-		"music:musician": [],
-		"music:song": [],
-		"music:release_date": undefined,
-		"music:creator": undefined,
-		"video:actor": [],
-		"video:director": [],
-		"video:duration": undefined,
-		"video:release_date": undefined,
-		"video:tag": [],
-		"video:series": undefined,
-		"video:writer": [],
 		"article:author": [],
 		"article:expiration_time": undefined,
 		"article:modified_time": undefined,
@@ -74,22 +63,38 @@ export class Metadata {
 		"book:isbn": undefined,
 		"book:release_date": undefined,
 		"book:tag": [],
+		"music:album": [],
+		"music:creator": undefined,
+		"music:duration": undefined,
+		"music:musician": [],
+		"music:release_date": undefined,
+		"music:song": [],
 		"profile:first_name": undefined,
 		"profile:gender": undefined,
 		"profile:last_name": undefined,
 		"profile:username": undefined,
+		"video:actor": [],
+		"video:director": [],
+		"video:duration": undefined,
+		"video:release_date": undefined,
+		"video:series": undefined,
+		"video:tag": [],
+		"video:writer": [],
+
 		"apple-mobile-web-app-capable": undefined,
 		"apple-mobile-web-app-status-bar-style": undefined,
 		"apple-mobile-web-app-title": undefined,
+		"apple-touch-fullscreen": undefined,
 		"apple-touch-icon": [],
 		"apple-touch-startup-image": undefined,
 		"format-detection": undefined,
+
 		"pinterest-rich-pin": undefined,
 		pinterest: undefined,
 	};
 
 	constructor(initial_values?: MetadataInitialValues) {
-		if (initial_values) this.#raw_values = { ...this.#raw_values, ...initial_values };
+		if (initial_values) this.#values = { ...this.#values, ...initial_values };
 	}
 
 	add<Key extends keyof OptionInput>(key: Key, input: OptionInput[Key]) {
@@ -98,16 +103,16 @@ export class Metadata {
 
 		const output = validator.parse(input);
 
-		if (Array.isArray(this.#raw_values[key])) {
+		if (Array.isArray(this.#values[key])) {
 			// Appending Value
-			this.#raw_values = {
-				...this.#raw_values,
-				[key]: [...this.#raw_values[key], output],
+			this.#values = {
+				...this.#values,
+				[key]: [...this.#values[key], output],
 			};
 		} else {
 			// Replacing Value
-			this.#raw_values = {
-				...this.#raw_values,
+			this.#values = {
+				...this.#values,
 				[key]: output,
 			};
 		}
@@ -411,10 +416,10 @@ export class Metadata {
 	}
 
 	toValues(): MetadataValues {
-		return this.#raw_values;
+		return this.#values;
 	}
 	toElements() {
-		const meta = values_to_elements(this.#raw_values);
+		const meta = values_to_elements(this.#values);
 
 		return meta;
 	}
