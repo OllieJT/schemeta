@@ -218,6 +218,7 @@ metadata
 | helper: `.description(string)` | Adds several description values like `og:description` & `twitter:description`     |
 | helper: `.url(string)`         | Adds several page url values like `og:url` & `canonical`                          |
 | helper: `.image(params)`       | Adds one image with optional properties like `og:alt` & `og:width`                |
+| helper: `.site_name(string)`   | Adds several site name values like `og:site_name` & `apple-mobile-web-app-title`  |
 | helper: `.type(type, params)`  | Adds `og:type` and optional related OpenGraph values                              |
 
 We plan to add more helper methods to reduce boilerplate.
