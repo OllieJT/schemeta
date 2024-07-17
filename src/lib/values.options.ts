@@ -17,14 +17,11 @@ import { z } from "zod";
 type LinkedData = Exclude<Thing, string | StupidType>;
 
 export const value_option = {
-	title: z.string().transform(
-		(children) =>
-			({
-				element: "title",
-				attributes: {},
-				children,
-			}) satisfies ValueElement,
-	),
+	title: z
+		.string()
+		.transform(
+			(children) => ({ element: "title", attributes: {}, children }) satisfies ValueElement,
+		),
 	bookmark: z.string().transform(
 		(content) =>
 			({
@@ -59,13 +56,12 @@ export const value_option = {
 				attributes: { name: "application-name", content },
 			}) satisfies ValueElement,
 	),
-	description: z.string().transform(
-		(content) =>
-			({
-				element: "meta",
-				attributes: { name: "description", content },
-			}) satisfies ValueElement,
-	),
+	description: z
+		.string()
+		.transform(
+			(content) =>
+				({ element: "meta", attributes: { name: "description", content } }) satisfies ValueElement,
+		),
 	canonical: z
 		.string()
 		.url()
@@ -78,17 +74,11 @@ export const value_option = {
 		),
 	"theme-color": hex_color.transform(
 		(content) =>
-			({
-				element: "meta",
-				attributes: { name: "theme-color", content },
-			}) satisfies ValueElement,
+			({ element: "meta", attributes: { name: "theme-color", content } }) satisfies ValueElement,
 	),
 	"color-scheme": color_scheme.transform(
 		(content) =>
-			({
-				element: "meta",
-				attributes: { name: "color-scheme", content },
-			}) satisfies ValueElement,
+			({ element: "meta", attributes: { name: "color-scheme", content } }) satisfies ValueElement,
 	),
 	"format-detection": z.literal("telephone=no").transform(
 		(content) =>
@@ -225,10 +215,7 @@ export const value_option = {
 	// Twitter - twitter:*
 	"twitter:card": twitter.card.transform(
 		(content) =>
-			({
-				element: "meta",
-				attributes: { name: "twitter:card", content },
-			}) satisfies ValueElement,
+			({ element: "meta", attributes: { name: "twitter:card", content } }) satisfies ValueElement,
 	),
 	"twitter:creator": twitter.username.transform(
 		(content) =>
@@ -247,10 +234,7 @@ export const value_option = {
 	"twitter:image": twitter.image.transform(
 		(content) =>
 			[
-				{
-					element: "meta",
-					attributes: { name: "twitter:image", content: content.src },
-				},
+				{ element: "meta", attributes: { name: "twitter:image", content: content.src } },
 				content.alt && {
 					element: "meta",
 					attributes: { name: "twitter:image:alt", content: content.alt },
@@ -259,10 +243,7 @@ export const value_option = {
 	),
 	"twitter:site": twitter.username.transform(
 		(content) =>
-			({
-				element: "meta",
-				attributes: { name: "twitter:site", content },
-			}) satisfies ValueElement,
+			({ element: "meta", attributes: { name: "twitter:site", content } }) satisfies ValueElement,
 	),
 	"twitter:title": z.string().transform(
 		(content) =>
@@ -276,10 +257,7 @@ export const value_option = {
 		.url()
 		.transform(
 			(content) =>
-				({
-					element: "meta",
-					attributes: { name: "twitter:url", content },
-				}) satisfies ValueElement,
+				({ element: "meta", attributes: { name: "twitter:url", content } }) satisfies ValueElement,
 		),
 
 	// Pinterest - pinterest:*
