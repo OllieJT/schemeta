@@ -80,6 +80,13 @@ export const value_option = {
 		(content) =>
 			({ element: "meta", attributes: { name: "color-scheme", content } }) satisfies ValueElement,
 	),
+	"color-scheme": color_scheme.transform(
+		(content) =>
+			({
+				element: "meta",
+				attributes: { name: "color-scheme", content },
+			}) satisfies ValueElement,
+	),
 	"format-detection": z.literal("telephone=no").transform(
 		(content) =>
 			({
