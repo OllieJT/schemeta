@@ -8,10 +8,6 @@ on:
     branches: ["*"]
   merge_group:
 
-env:
-  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -22,6 +18,7 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/setup
 
+      - run: pnpm build
       - run: pnpm lint
 
   check-changeset:
