@@ -28,9 +28,9 @@
 - [Setup](#setup)
   - [Installation](#installation)
 - [API](#api)
-  - [`new Metadata()`](#new-metadata)
-    - [Define](#define)
-    - [Render](#render)
+  - [`Metadata` Instance](#metadata-instance)
+    - [Add values](#add-values)
+    - [Render elements](#render-elements)
   - [Undocumented](#undocumented)
 - [Examples](#examples)
   - [Vanilla Example](#vanilla-example)
@@ -205,27 +205,28 @@ metadata
 
 ## API
 
-### `new Metadata()`
+### `Metadata` Instance
 
-#### Define
+`new Metadata(initial?: MetadataInitialValues)`
 
-| method                         | Purpose                                                                                      |
-| ------------------------------ | -------------------------------------------------------------------------------------------- |
-| core: `.meta(key, value)`      | Add individual `<meta />` values like OpenGraph                                              |
-| core: `.xml(key, value)`       | Add individual xml like `<title>`, and `<script>` values like [JSON-LD](https://json-ld.org) |
-| helper: `.title(string)`       | Adds several title values like `og:title` & `twitter:title`                                  |
-| helper: `.description(string)` | Adds several description values like `og:description` & `twitter:description`                |
-| helper: `.url(string)`         | Adds several page url values like `og:url` & `canonical`                                     |
-| helper: `.image(params)`       | Adds one image with optional properties like `og:alt` & `og:width`                           |
-| helper: `.type(type, params)`  | Adds `og:type` and optional related OpenGraph values                                         |
+#### Add values
+
+| method                         | Purpose                                                                           |
+| ------------------------------ | --------------------------------------------------------------------------------- |
+| core: `.add(key, value)`       | Add individual [supported values](#supported-metadata) like OpenGraph, or JSON-LD |
+| helper: `.title(string)`       | Adds several title values like `og:title` & `twitter:title`                       |
+| helper: `.description(string)` | Adds several description values like `og:description` & `twitter:description`     |
+| helper: `.url(string)`         | Adds several page url values like `og:url` & `canonical`                          |
+| helper: `.image(params)`       | Adds one image with optional properties like `og:alt` & `og:width`                |
+| helper: `.type(type, params)`  | Adds `og:type` and optional related OpenGraph values                              |
 
 We plan to add more helper methods to reduce boilerplate.
 
-#### Render
+#### Render elements
 
 | method          | output                                                                          | usecase                                       |
 | --------------- | ------------------------------------------------------------------------------- | --------------------------------------------- |
-| `.toValues()`   | `{ meta: Meta.Values, xml: Xml.Values }`                                        | Values needed to initialize `Metadata`.       |
+| `.toValues()`   | `MetadataValues`                                                                | Values needed to initialize `Metadata`.       |
 | `.toElements()` | `{ element: string; attributes: Record<string, string>; children?: string; }[]` | Enables you to manually render html elements. |
 | `.toHTML()`     | `string[]`                                                                      | Allows you to render each html element.       |
 | `.toString()`   | `string`                                                                        | Allows you to render all html elements.       |
