@@ -1,5 +1,5 @@
 <p align="center">
- <img src="https://github.com/OllieJT/schemeta/blob/main/static/banner.png?raw=true" width="600" height="288" alt="sche/ma in a pixelated monospaced font, on a blue-green glowing background">
+ <img src="https://github.com/OllieJT/schemeta/blob/main/static/banner.png?raw=true" width="676" height="288" alt="sche/ma in a pixelated monospaced font, on a blue-green glowing background">
 </p>
 
 <h1 align="center">
