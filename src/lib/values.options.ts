@@ -1,5 +1,6 @@
 import {
 	apple,
+	color_scheme,
 	date_iso,
 	hex_color,
 	msapplication,
@@ -48,7 +49,7 @@ export const value_option = {
 				({
 					element: "script",
 					attributes: {},
-					children: JSON.stringify(children),
+					children: `\n\t${JSON.stringify(children)}\n`,
 				}) satisfies ValueElement,
 		),
 	"application-name": z.string().transform(
@@ -80,6 +81,13 @@ export const value_option = {
 			({
 				element: "meta",
 				attributes: { name: "theme-color", content },
+			}) satisfies ValueElement,
+	),
+	"color-scheme": color_scheme.transform(
+		(content) =>
+			({
+				element: "meta",
+				attributes: { name: "color-scheme", content },
 			}) satisfies ValueElement,
 	),
 	"format-detection": z.literal("telephone=no").transform(
@@ -327,6 +335,13 @@ export const value_option = {
 			({
 				element: "meta",
 				attributes: { name: "apple-mobile-web-app-title", content },
+			}) satisfies ValueElement,
+	),
+	"apple-touch-fullscreen": yes_or_no.transform(
+		(content) =>
+			({
+				element: "meta",
+				attributes: { name: "apple-touch-fullscreen", content },
 			}) satisfies ValueElement,
 	),
 
@@ -686,7 +701,7 @@ export const value_option = {
 				attributes: { property: "profile:username", content },
 			}) satisfies ValueElement,
 	),
-};
+} satisfies Record<string, z.ZodTypeAny>;
 
 export type OptionInput = {
 	[key in keyof typeof value_option]: z.input<(typeof value_option)[key]>;

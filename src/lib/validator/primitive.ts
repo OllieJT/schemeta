@@ -21,3 +21,5 @@ export const yes_or_no = z.union([z.literal("yes"), z.literal("no")]);
 export const num_str = z.number().transform(String);
 
 export const date_iso = z.date().transform((date) => date.toISOString());
+
+export const color_scheme = z.union([z.literal("light"), z.literal("dark")]);

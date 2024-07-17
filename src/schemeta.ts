@@ -14,6 +14,8 @@ export class Metadata {
 		description: undefined,
 		canonical: undefined,
 		"theme-color": undefined,
+		"apple-touch-fullscreen": undefined,
+		"color-scheme": undefined,
 		"msapplication-allowDomainApiCalls": undefined,
 		"msapplication-allowDomainMetaTags": undefined,
 		"msapplication-badge": undefined,
@@ -91,7 +93,10 @@ export class Metadata {
 	}
 
 	add<Key extends keyof OptionInput>(key: Key, input: OptionInput[Key]) {
-		const output = value_option[key].parse(input);
+		const validator = value_option[key];
+		if (!validator) throw new Error(`Unable to validate key: ${key}`);
+
+		const output = validator.parse(input);
 
 		if (Array.isArray(this.#raw_values[key])) {
 			// Appending Value
