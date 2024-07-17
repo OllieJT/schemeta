@@ -3,6 +3,16 @@ import { to_html } from "$src/lib/to-html.js";
 import { Prettify } from "$src/lib/types.js";
 import { Meta, meta, Xml, xml } from "$src/lib/values.js";
 
+export type MetadataValues = {
+	meta: Meta.Values;
+	xml: Xml.Values;
+};
+
+export type MetadataInitialValues = Partial<{
+	meta: Partial<Meta.Values>;
+	xml: Partial<Xml.Values>;
+}>;
+
 export class Metadata {
 	#meta_values: Meta.Values = {
 		"application-name": undefined,
@@ -85,7 +95,7 @@ export class Metadata {
 		"application/ld+json": [],
 	};
 
-	constructor(values?: { meta?: Partial<Meta.Values>; xml?: Partial<Xml.Values> }) {
+	constructor(values?: MetadataInitialValues) {
 		if (values?.meta) this.#meta_values = { ...this.#meta_values, ...values.meta };
 		if (values?.xml) this.#xml_values = { ...this.#xml_values, ...values.xml };
 	}
@@ -420,7 +430,7 @@ export class Metadata {
 		}
 	}
 
-	toValues() {
+	toValues(): MetadataValues {
 		return {
 			meta: this.#meta_values,
 			xml: this.#xml_values,
