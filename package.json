@@ -19,6 +19,7 @@
 		"lint:fix": "eslint --fix .",
 		"lint": "eslint . && publint",
 		"release": "changeset version",
+		"changeset:empty": "changeset add --empty",
 		"test": "vitest",
 		"typecheck": "tsc --noEmit"
 	},
