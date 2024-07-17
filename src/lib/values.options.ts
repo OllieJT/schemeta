@@ -701,7 +701,7 @@ export const value_option = {
 				attributes: { property: "profile:username", content },
 			}) satisfies ValueElement,
 	),
-};
+} satisfies Record<string, z.ZodTypeAny>;
 
 export type OptionInput = {
 	[key in keyof typeof value_option]: z.input<(typeof value_option)[key]>;
