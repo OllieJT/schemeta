@@ -1,5 +1,21 @@
 # schemeta
 
+## 0.2.1
+
+### Patch Changes
+
+- [#13](https://github.com/OllieJT/schemeta/pull/13) [`9f3c7c5`](https://github.com/OllieJT/schemeta/commit/9f3c7c5004c851ca5c10151f4413b92e6ea4bbeb) Thanks [@OllieJT](https://github.com/OllieJT)! - Correct root-level export
+
+- [#13](https://github.com/OllieJT/schemeta/pull/13) [`9f3c7c5`](https://github.com/OllieJT/schemeta/commit/9f3c7c5004c851ca5c10151f4413b92e6ea4bbeb) Thanks [@OllieJT](https://github.com/OllieJT)! - Improve type exports
+
+- [#13](https://github.com/OllieJT/schemeta/pull/13) [`9f3c7c5`](https://github.com/OllieJT/schemeta/commit/9f3c7c5004c851ca5c10151f4413b92e6ea4bbeb) Thanks [@OllieJT](https://github.com/OllieJT)! - Adds site_name utility method
+
+- [#17](https://github.com/OllieJT/schemeta/pull/17) [`e5b87d9`](https://github.com/OllieJT/schemeta/commit/e5b87d901f2fa38ede36125bdc4c6c22a8a27a8c) Thanks [@OllieJT](https://github.com/OllieJT)! - Update deps
+
+- [#16](https://github.com/OllieJT/schemeta/pull/16) [`6ffead8`](https://github.com/OllieJT/schemeta/commit/6ffead8dbdf1ed7797e57f96dec4b05c95907605) Thanks [@OllieJT](https://github.com/OllieJT)! - Update readme notes
+
+- [#13](https://github.com/OllieJT/schemeta/pull/13) [`9f3c7c5`](https://github.com/OllieJT/schemeta/commit/9f3c7c5004c851ca5c10151f4413b92e6ea4bbeb) Thanks [@OllieJT](https://github.com/OllieJT)! - Include additional type exports
+
 ## 0.2.0
 
 ### Minor Changes
