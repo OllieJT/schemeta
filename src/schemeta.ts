@@ -1,10 +1,15 @@
-import { to_elements } from "$src/lib/to-elements.js";
 import { to_html } from "$src/lib/to-html.js";
 import { Prettify } from "$src/lib/types.js";
-import { Meta, meta, Xml, xml } from "$src/lib/values.js";
+import { OptionInput, value_option, Values, values_to_elements } from "$src/lib/values.js";
+
+export type MetadataValues = Values;
+export type MetadataInitialValues = Partial<Values>;
 
 export class Metadata {
-	#meta_values: Meta.Values = {
+	#raw_values: MetadataValues = {
+		title: undefined,
+		bookmark: undefined,
+		"application/ld+json": [],
 		"application-name": undefined,
 		description: undefined,
 		canonical: undefined,
@@ -80,49 +85,24 @@ export class Metadata {
 		"pinterest-rich-pin": undefined,
 		pinterest: undefined,
 	};
-	#xml_values: Xml.Values = {
-		title: undefined,
-		"application/ld+json": [],
-	};
 
-	constructor(values?: { meta?: Partial<Meta.Values>; xml?: Partial<Xml.Values> }) {
-		if (values?.meta) this.#meta_values = { ...this.#meta_values, ...values.meta };
-		if (values?.xml) this.#xml_values = { ...this.#xml_values, ...values.xml };
+	constructor(initial_values?: MetadataInitialValues) {
+		if (initial_values) this.#raw_values = { ...this.#raw_values, ...initial_values };
 	}
 
-	// Add Values
-	meta<Key extends keyof Meta.OptionInput>(key: Key, input: Meta.OptionInput[Key]) {
-		const output = meta.option[key].parse(input);
+	add<Key extends keyof OptionInput>(key: Key, input: OptionInput[Key]) {
+		const output = value_option[key].parse(input);
 
-		if (Array.isArray(this.#meta_values[key])) {
+		if (Array.isArray(this.#raw_values[key])) {
 			// Appending Value
-			this.#meta_values = {
-				...this.#meta_values,
-				[key]: [...this.#meta_values[key], output],
+			this.#raw_values = {
+				...this.#raw_values,
+				[key]: [...this.#raw_values[key], output],
 			};
 		} else {
 			// Replacing Value
-			this.#meta_values = {
-				...this.#meta_values,
-				[key]: output,
-			};
-		}
-		return this;
-	}
-
-	xml<Key extends keyof Xml.OptionInput>(key: Key, input: Xml.OptionInput[Key]) {
-		const output = xml.option[key].parse(input);
-
-		if (Array.isArray(this.#xml_values[key])) {
-			// Appending Value
-			this.#xml_values = {
-				...this.#xml_values,
-				[key]: [...this.#xml_values[key], output],
-			};
-		} else {
-			// Replacing Value
-			this.#xml_values = {
-				...this.#xml_values,
+			this.#raw_values = {
+				...this.#raw_values,
 				[key]: output,
 			};
 		}
@@ -130,15 +110,15 @@ export class Metadata {
 	}
 
 	title(content: string) {
-		this.xml("title", content);
-		this.meta("og:title", content);
-		this.meta("twitter:title", content);
+		this.add("title", content);
+		this.add("og:title", content);
+		this.add("twitter:title", content);
 		return this;
 	}
 	description(content: string) {
-		this.meta("description", content);
-		this.meta("og:description", content);
-		this.meta("twitter:description", content);
+		this.add("description", content);
+		this.add("og:description", content);
+		this.add("twitter:description", content);
 		return this;
 	}
 	url(content: string) {
@@ -146,13 +126,12 @@ export class Metadata {
 		canonical.hash = "";
 		canonical.search = "";
 
-		this.meta("canonical", canonical.href);
-		this.meta("og:url", content);
-		this.meta("twitter:url", content);
-		this.meta("msapplication-starturl", content);
+		this.add("canonical", canonical.href);
+		this.add("og:url", content);
+		this.add("twitter:url", content);
+		this.add("msapplication-starturl", content);
 		return this;
 	}
-
 	image(img: {
 		src: string;
 		alt?: string;
@@ -161,8 +140,14 @@ export class Metadata {
 		type?: string;
 		secure_url?: string;
 	}) {
-		this.meta("og:image", img);
-		this.meta("twitter:image", img);
+		this.add("og:image", img);
+		this.add("twitter:image", img);
+		return this;
+	}
+	site_name(content: string) {
+		this.add("og:site_name", content);
+		this.add("application-name", content);
+		this.add("apple-mobile-web-app-title", content);
 		return this;
 	}
 
@@ -173,243 +158,243 @@ export class Metadata {
 		| {
 				type: "article";
 				params: Prettify<{
-					authors?: Meta.OptionInput["article:author"][];
-					expiration_time?: Meta.OptionInput["article:expiration_time"];
-					modified_time?: Meta.OptionInput["article:modified_time"];
-					published_time?: Meta.OptionInput["article:published_time"];
-					section?: Meta.OptionInput["article:section"];
-					tags?: Meta.OptionInput["article:tag"][];
+					authors?: OptionInput["article:author"][];
+					expiration_time?: OptionInput["article:expiration_time"];
+					modified_time?: OptionInput["article:modified_time"];
+					published_time?: OptionInput["article:published_time"];
+					section?: OptionInput["article:section"];
+					tags?: OptionInput["article:tag"][];
 				}>;
 		  }
 		| {
 				type: "book";
 				params: Prettify<{
-					authors?: Meta.OptionInput["book:author"][];
-					isbn?: Meta.OptionInput["book:isbn"];
-					release_date?: Meta.OptionInput["book:release_date"];
-					tags?: Meta.OptionInput["book:tag"][];
+					authors?: OptionInput["book:author"][];
+					isbn?: OptionInput["book:isbn"];
+					release_date?: OptionInput["book:release_date"];
+					tags?: OptionInput["book:tag"][];
 				}>;
 		  }
 		| {
 				type: "music.song";
 				params: Prettify<{
-					duration?: Meta.OptionInput["music:duration"];
-					albums?: Meta.OptionInput["music:album"][];
-					musicians?: Meta.OptionInput["music:musician"][];
+					duration?: OptionInput["music:duration"];
+					albums?: OptionInput["music:album"][];
+					musicians?: OptionInput["music:musician"][];
 				}>;
 		  }
 		| {
 				type: "music.album";
 				params: Prettify<{
-					songs?: Meta.OptionInput["music:song"][];
-					musicians?: Meta.OptionInput["music:musician"][];
-					release_date?: Meta.OptionInput["music:release_date"];
+					songs?: OptionInput["music:song"][];
+					musicians?: OptionInput["music:musician"][];
+					release_date?: OptionInput["music:release_date"];
 				}>;
 		  }
 		| {
 				type: "music.playlist";
 				params: Prettify<{
-					songs?: Meta.OptionInput["music:song"][];
-					creator?: Meta.OptionInput["music:creator"];
+					songs?: OptionInput["music:song"][];
+					creator?: OptionInput["music:creator"];
 				}>;
 		  }
 		| {
 				type: "music.radio_station";
 				params: Prettify<{
-					creator?: Meta.OptionInput["music:creator"];
+					creator?: OptionInput["music:creator"];
 				}>;
 		  }
 		| {
 				type: "profile";
 				params: Prettify<{
-					first_name?: Meta.OptionInput["profile:first_name"];
-					last_name?: Meta.OptionInput["profile:last_name"];
-					username?: Meta.OptionInput["profile:username"];
-					gender?: Meta.OptionInput["profile:gender"];
+					first_name?: OptionInput["profile:first_name"];
+					last_name?: OptionInput["profile:last_name"];
+					username?: OptionInput["profile:username"];
+					gender?: OptionInput["profile:gender"];
 				}>;
 		  }
 		| {
 				type: "video.episode";
 				params: Prettify<{
-					actors?: Meta.OptionInput["video:actor"][];
-					directors?: Meta.OptionInput["video:director"][];
-					writers?: Meta.OptionInput["video:writer"][];
-					duration?: Meta.OptionInput["video:duration"];
-					release_date?: Meta.OptionInput["video:release_date"];
-					tags?: Meta.OptionInput["video:tag"][];
-					series?: Meta.OptionInput["video:series"];
+					actors?: OptionInput["video:actor"][];
+					directors?: OptionInput["video:director"][];
+					writers?: OptionInput["video:writer"][];
+					duration?: OptionInput["video:duration"];
+					release_date?: OptionInput["video:release_date"];
+					tags?: OptionInput["video:tag"][];
+					series?: OptionInput["video:series"];
 				}>;
 		  }
 		| {
 				type: "video.movie";
 				params: Prettify<{
-					actors?: Meta.OptionInput["video:actor"][];
-					directors?: Meta.OptionInput["video:director"][];
-					writers?: Meta.OptionInput["video:writer"][];
-					duration?: Meta.OptionInput["video:duration"];
-					release_date?: Meta.OptionInput["video:release_date"];
-					tags?: Meta.OptionInput["video:tag"][];
+					actors?: OptionInput["video:actor"][];
+					directors?: OptionInput["video:director"][];
+					writers?: OptionInput["video:writer"][];
+					duration?: OptionInput["video:duration"];
+					release_date?: OptionInput["video:release_date"];
+					tags?: OptionInput["video:tag"][];
 				}>;
 		  }
 		| {
 				type: "video.other";
 				params: Prettify<{
-					actors?: Meta.OptionInput["video:actor"][];
-					directors?: Meta.OptionInput["video:director"][];
-					writers?: Meta.OptionInput["video:writer"][];
-					duration?: Meta.OptionInput["video:duration"];
-					release_date?: Meta.OptionInput["video:release_date"];
-					tags?: Meta.OptionInput["video:tag"][];
+					actors?: OptionInput["video:actor"][];
+					directors?: OptionInput["video:director"][];
+					writers?: OptionInput["video:writer"][];
+					duration?: OptionInput["video:duration"];
+					release_date?: OptionInput["video:release_date"];
+					tags?: OptionInput["video:tag"][];
 				}>;
 		  }
 		| {
 				type: "video.tv_show";
 				params: Prettify<{
-					actors?: Meta.OptionInput["video:actor"][];
-					directors?: Meta.OptionInput["video:director"][];
-					writers?: Meta.OptionInput["video:writer"][];
-					duration?: Meta.OptionInput["video:duration"];
-					release_date?: Meta.OptionInput["video:release_date"];
-					tags?: Meta.OptionInput["video:tag"][];
+					actors?: OptionInput["video:actor"][];
+					directors?: OptionInput["video:director"][];
+					writers?: OptionInput["video:writer"][];
+					duration?: OptionInput["video:duration"];
+					release_date?: OptionInput["video:release_date"];
+					tags?: OptionInput["video:tag"][];
 				}>;
 		  }
 		| { type: "website"; params?: object }) {
 		if (type === "article") {
 			if (params.authors) {
-				params.authors.forEach((content) => this.meta("article:author", content));
+				params.authors.forEach((content) => this.add("article:author", content));
 			}
 			if (params.expiration_time) {
-				this.meta("article:expiration_time", params.expiration_time);
+				this.add("article:expiration_time", params.expiration_time);
 			}
 			if (params.modified_time) {
-				this.meta("article:modified_time", params.modified_time);
+				this.add("article:modified_time", params.modified_time);
 			}
 			if (params.published_time) {
-				this.meta("article:published_time", params.published_time);
+				this.add("article:published_time", params.published_time);
 			}
 			if (params.section) {
-				this.meta("article:section", params.section);
+				this.add("article:section", params.section);
 			}
 			if (params.tags) {
-				params.tags.forEach((tag) => this.meta("article:tag", tag));
+				params.tags.forEach((tag) => this.add("article:tag", tag));
 			}
 
 			return this;
 		} else if (type === "book") {
 			if (params.authors) {
-				params.authors.forEach((content) => this.meta("book:author", content));
+				params.authors.forEach((content) => this.add("book:author", content));
 			}
-			if (params.isbn) this.meta("book:isbn", params.isbn);
-			if (params.release_date) this.meta("book:release_date", params.release_date);
+			if (params.isbn) this.add("book:isbn", params.isbn);
+			if (params.release_date) this.add("book:release_date", params.release_date);
 			if (params.tags) {
-				params.tags.forEach((content) => this.meta("book:tag", content));
+				params.tags.forEach((content) => this.add("book:tag", content));
 			}
 
 			return this;
 		} else if (type === "music.song") {
-			if (params.duration) this.meta("music:duration", params.duration);
+			if (params.duration) this.add("music:duration", params.duration);
 			if (params.albums) {
-				params.albums.forEach((content) => this.meta("music:album", content));
+				params.albums.forEach((content) => this.add("music:album", content));
 			}
 			if (params.musicians) {
-				params.musicians.forEach((content) => this.meta("music:musician", content));
+				params.musicians.forEach((content) => this.add("music:musician", content));
 			}
 
 			return this;
 		} else if (type === "music.album") {
 			if (params.songs) {
-				params.songs.forEach((content) => this.meta("music:song", content));
+				params.songs.forEach((content) => this.add("music:song", content));
 			}
 			if (params.musicians) {
-				params.musicians.forEach((content) => this.meta("music:musician", content));
+				params.musicians.forEach((content) => this.add("music:musician", content));
 			}
-			if (params.release_date) this.meta("music:release_date", params.release_date);
+			if (params.release_date) this.add("music:release_date", params.release_date);
 
 			return this;
 		} else if (type === "music.playlist") {
 			if (params.songs) {
-				params.songs.forEach((content) => this.meta("music:song", content));
+				params.songs.forEach((content) => this.add("music:song", content));
 			}
-			if (params.creator) this.meta("music:creator", params.creator);
+			if (params.creator) this.add("music:creator", params.creator);
 
 			return this;
 		} else if (type === "music.radio_station") {
-			if (params.creator) this.meta("music:creator", params.creator);
+			if (params.creator) this.add("music:creator", params.creator);
 
 			return this;
 		} else if (type === "profile") {
-			if (params.first_name) this.meta("profile:first_name", params.first_name);
-			if (params.last_name) this.meta("profile:last_name", params.last_name);
-			if (params.username) this.meta("profile:username", params.username);
-			if (params.gender) this.meta("profile:gender", params.gender);
+			if (params.first_name) this.add("profile:first_name", params.first_name);
+			if (params.last_name) this.add("profile:last_name", params.last_name);
+			if (params.username) this.add("profile:username", params.username);
+			if (params.gender) this.add("profile:gender", params.gender);
 
 			return this;
 		} else if (type === "video.episode") {
 			if (params.actors) {
-				params.actors.forEach((content) => this.meta("video:actor", content));
+				params.actors.forEach((content) => this.add("video:actor", content));
 			}
 			if (params.directors) {
-				params.directors.forEach((content) => this.meta("video:director", content));
+				params.directors.forEach((content) => this.add("video:director", content));
 			}
 			if (params.writers) {
-				params.writers.forEach((content) => this.meta("video:writer", content));
+				params.writers.forEach((content) => this.add("video:writer", content));
 			}
-			if (params.duration) this.meta("video:duration", params.duration);
-			if (params.release_date) this.meta("video:release_date", params.release_date);
+			if (params.duration) this.add("video:duration", params.duration);
+			if (params.release_date) this.add("video:release_date", params.release_date);
 			if (params.tags) {
-				params.tags.forEach((content) => this.meta("video:tag", content));
+				params.tags.forEach((content) => this.add("video:tag", content));
 			}
-			if (params.series) this.meta("video:series", params.series);
+			if (params.series) this.add("video:series", params.series);
 
 			return this;
 		} else if (type === "video.movie") {
 			if (params.actors) {
-				params.actors.forEach((content) => this.meta("video:actor", content));
+				params.actors.forEach((content) => this.add("video:actor", content));
 			}
 			if (params.directors) {
-				params.directors.forEach((content) => this.meta("video:director", content));
+				params.directors.forEach((content) => this.add("video:director", content));
 			}
 			if (params.writers) {
-				params.writers.forEach((content) => this.meta("video:writer", content));
+				params.writers.forEach((content) => this.add("video:writer", content));
 			}
-			if (params.duration) this.meta("video:duration", params.duration);
-			if (params.release_date) this.meta("video:release_date", params.release_date);
+			if (params.duration) this.add("video:duration", params.duration);
+			if (params.release_date) this.add("video:release_date", params.release_date);
 			if (params.tags) {
-				params.tags.forEach((content) => this.meta("video:tag", content));
+				params.tags.forEach((content) => this.add("video:tag", content));
 			}
 
 			return this;
 		} else if (type === "video.other") {
 			if (params.actors) {
-				params.actors.forEach((content) => this.meta("video:actor", content));
+				params.actors.forEach((content) => this.add("video:actor", content));
 			}
 			if (params.directors) {
-				params.directors.forEach((content) => this.meta("video:director", content));
+				params.directors.forEach((content) => this.add("video:director", content));
 			}
 			if (params.writers) {
-				params.writers.forEach((content) => this.meta("video:writer", content));
+				params.writers.forEach((content) => this.add("video:writer", content));
 			}
-			if (params.duration) this.meta("video:duration", params.duration);
-			if (params.release_date) this.meta("video:release_date", params.release_date);
+			if (params.duration) this.add("video:duration", params.duration);
+			if (params.release_date) this.add("video:release_date", params.release_date);
 			if (params.tags) {
-				params.tags.forEach((content) => this.meta("video:tag", content));
+				params.tags.forEach((content) => this.add("video:tag", content));
 			}
 
 			return this;
 		} else if (type === "video.tv_show") {
 			if (params.actors) {
-				params.actors.forEach((content) => this.meta("video:actor", content));
+				params.actors.forEach((content) => this.add("video:actor", content));
 			}
 			if (params.directors) {
-				params.directors.forEach((content) => this.meta("video:director", content));
+				params.directors.forEach((content) => this.add("video:director", content));
 			}
 			if (params.writers) {
-				params.writers.forEach((content) => this.meta("video:writer", content));
+				params.writers.forEach((content) => this.add("video:writer", content));
 			}
-			if (params.duration) this.meta("video:duration", params.duration);
-			if (params.release_date) this.meta("video:release_date", params.release_date);
+			if (params.duration) this.add("video:duration", params.duration);
+			if (params.release_date) this.add("video:release_date", params.release_date);
 			if (params.tags) {
-				params.tags.forEach((content) => this.meta("video:tag", content));
+				params.tags.forEach((content) => this.add("video:tag", content));
 			}
 
 			return this;
@@ -420,17 +405,13 @@ export class Metadata {
 		}
 	}
 
-	toValues() {
-		return {
-			meta: this.#meta_values,
-			xml: this.#xml_values,
-		};
+	toValues(): MetadataValues {
+		return this.#raw_values;
 	}
 	toElements() {
-		const meta = to_elements.from_meta(this.#meta_values);
-		const script = to_elements.from_xml(this.#xml_values);
+		const meta = values_to_elements(this.#raw_values);
 
-		return [...meta, ...script];
+		return meta;
 	}
 	toHTML() {
 		const elements = this.toElements();
@@ -445,51 +426,3 @@ export class Metadata {
 		return html.join("\n");
 	}
 }
-
-const metadata = new Metadata();
-
-metadata
-	.meta("og:site_name", "DesignThen")
-	.title("The tech stack behind our projects in 2024")
-	.description(
-		"Curious about DesignThen's approach? Gain insights into our design & development philosophy, and the tools shaping our work.",
-	)
-	.type({
-		type: "article",
-		params: {
-			authors: ["Ollie Taylor"],
-			published_time: new Date("2024-02-03T16:00:00Z"),
-			section: "Web Development",
-		},
-	})
-	.xml("application/ld+json", {
-		"@type": "Article",
-		author: { "@type": "Person", name: "Ollie Taylor" },
-		headline: "The tech stack behind our projects in 2024",
-		datePublished: "2024-02-03T16:00:00Z",
-	});
-
-/*
-
-
-
-<script type="application/ld+json">
-	{
-		"@context": "http://schema.org",
-		"@type": "CollectionPage",
-		"name": "BBC - Home",
-		"headline": "BBC - Home",
-		"url": "https://www.bbc.co.uk/",
-		"publisher": {
-			"@type": "NewsMediaOrganization",
-			"name": "BBC",
-			"publishingPrinciples": "https://www.bbc.co.uk/news/help-41670342",
-			"logo": {
-				"@type": "ImageObject",
-				"url": "https://static.files.bbci.co.uk/core/website/assets/static/webcore/bbc_blocks_84x24.5b565ac136ea8f9cb3b0f8e02eca1e0f.svg"
-			}
-		},
-		"mainEntity": { "@type": "ItemList", "itemListElement": [] }
-	}
-</script>
-*/

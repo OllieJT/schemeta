@@ -1,49 +1,56 @@
-import { PickArrayLike } from "$src/lib/types.js";
+import {
+	apple,
+	date_iso,
+	hex_color,
+	msapplication,
+	num_str,
+	opengraph,
+	true_or_false,
+	twitter,
+	yes_or_no,
+} from "$src/lib/validator/index.js";
 import { ValueElement } from "$src/lib/values.types.js";
+import { StupidType, Thing } from "schema-dts";
 import { z } from "zod";
 
-const hex_code = z.custom<`#${string}`>(
-	(data) => {
-		if (!data) return false;
-		else if (typeof data !== "string") return false;
-		else if (!data.startsWith("#")) return false;
-		else if (data.length > 7) return false;
-		else return true;
-	},
-	{
-		fatal: true,
-		message: "Invalid color value. Expected a HEX code like #000000 or #fff",
-	},
-);
-const twitter_username = z.custom<`@${string}`>(
-	(data) => {
-		if (!data) return false;
-		else if (typeof data !== "string") return false;
-		else if (!data.startsWith("@")) return false;
-		else if (data.length < 4) return false;
-		else return true;
-	},
-	{
-		fatal: true,
-		message: "Invalid Twitter username. Expected a value like @username",
-	},
-);
-const true_or_false = z.union([z.literal("true"), z.literal("false")]);
-const msapplication_frequency = z.union([
-	z.literal(30),
-	z.literal(60),
-	z.literal(360),
-	z.literal(720),
-	z.literal(1440),
-]);
+type LinkedData = Exclude<Thing, string | StupidType>;
 
-function msapplication_stringify(data: Record<string, string | number>) {
-	return Object.entries(data)
-		.map(([key, value]) => `${key}=${value}`)
-		.join(";");
-}
-
-export const option = {
+export const value_option = {
+	title: z.string().transform(
+		(children) =>
+			({
+				element: "title",
+				attributes: {},
+				children,
+			}) satisfies ValueElement,
+	),
+	bookmark: z.string().transform(
+		(content) =>
+			({
+				element: "link",
+				attributes: { rel: "bookmark", href: content },
+			}) satisfies ValueElement,
+	),
+	"application/ld+json": z
+		.custom<LinkedData>(
+			(data) => {
+				if (!data) return false;
+				else if (typeof data !== "object") return false;
+				else if (Array.isArray(data)) return false;
+				else if ("@type"! in data && typeof data["@type"] !== "string") return false;
+				else if (typeof data["@type"] !== "string") return false;
+				else return true;
+			},
+			{ fatal: true, message: "Expected an object representing a JSON-LD Thing." },
+		)
+		.transform(
+			(children) =>
+				({
+					element: "script",
+					attributes: {},
+					children: JSON.stringify(children),
+				}) satisfies ValueElement,
+		),
 	"application-name": z.string().transform(
 		(content) =>
 			({
@@ -68,11 +75,18 @@ export const option = {
 					attributes: { rel: "canonical", href: content },
 				}) satisfies ValueElement,
 		),
-	"theme-color": hex_code.transform(
+	"theme-color": hex_color.transform(
 		(content) =>
 			({
 				element: "meta",
 				attributes: { name: "theme-color", content },
+			}) satisfies ValueElement,
+	),
+	"format-detection": z.literal("telephone=no").transform(
+		(content) =>
+			({
+				element: "meta",
+				attributes: { name: "format-detection", content },
 			}) satisfies ValueElement,
 	),
 
@@ -91,18 +105,13 @@ export const option = {
 				attributes: { name: "msapplication-allowDomainMetaTags", content },
 			}) satisfies ValueElement,
 	),
-	"msapplication-badge": z
-		.object({
-			frequency: msapplication_frequency.optional(),
-			"polling-uri": z.string(),
-		})
-		.transform(
-			(content) =>
-				({
-					element: "meta",
-					attributes: { name: "msapplication-badge", content: msapplication_stringify(content) },
-				}) satisfies ValueElement,
-		),
+	"msapplication-badge": msapplication.badge.transform(
+		(content) =>
+			({
+				element: "meta",
+				attributes: { name: "msapplication-badge", content },
+			}) satisfies ValueElement,
+	),
 	"msapplication-config": z.string().transform(
 		(content) =>
 			({
@@ -110,33 +119,20 @@ export const option = {
 				attributes: { name: "msapplication-config", content },
 			}) satisfies ValueElement,
 	),
-	"msapplication-navbutton-color": hex_code.transform(
+	"msapplication-navbutton-color": hex_color.transform(
 		(content) =>
 			({
 				element: "meta",
 				attributes: { name: "msapplication-navbutton-color", content },
 			}) satisfies ValueElement,
 	),
-	"msapplication-notification": z
-		.object({
-			frequency: msapplication_frequency.optional(),
-			cycle: z.number().min(0).max(7).optional(),
-			"polling-uri": z.string().url(),
-			"polling-uri2": z.string().url().optional(),
-			"polling-uri3": z.string().url().optional(),
-			"polling-uri4": z.string().url().optional(),
-			"polling-uri5": z.string().url().optional(),
-		})
-		.transform(
-			(content) =>
-				({
-					element: "meta",
-					attributes: {
-						name: "msapplication-notification",
-						content: msapplication_stringify(content),
-					},
-				}) satisfies ValueElement,
-		),
+	"msapplication-notification": msapplication.notification.transform(
+		(content) =>
+			({
+				element: "meta",
+				attributes: { name: "msapplication-notification", content },
+			}) satisfies ValueElement,
+	),
 	"msapplication-square150x150logo": z.string().transform(
 		(content) =>
 			({
@@ -175,21 +171,14 @@ export const option = {
 				attributes: { name: "msapplication-task-separator", content },
 			}) satisfies ValueElement,
 	),
-	"msapplication-task": z
-		.object({
-			name: z.string(),
-			"action-uri": z.string().url(),
-			"icon-uri": z.string().url(),
-			"window-type": z.union([z.literal("tab"), z.literal("self"), z.literal("window")]),
-		})
-		.transform(
-			(content) =>
-				({
-					element: "meta",
-					attributes: { name: "msapplication-task", content: msapplication_stringify(content) },
-				}) satisfies ValueElement,
-		),
-	"msapplication-TileColor": hex_code.transform(
+	"msapplication-task": msapplication.task.transform(
+		(content) =>
+			({
+				element: "meta",
+				attributes: { name: "msapplication-task", content: content },
+			}) satisfies ValueElement,
+	),
+	"msapplication-TileColor": hex_color.transform(
 		(content) =>
 			({
 				element: "meta",
@@ -217,30 +206,23 @@ export const option = {
 				attributes: { name: "msapplication-wide310x150logo", content },
 			}) satisfies ValueElement,
 	),
-	"msapplication-window": z.object({ width: z.number(), height: z.number() }).transform(
+	"msapplication-window": msapplication.window.transform(
 		(content) =>
 			({
 				element: "meta",
-				attributes: { name: "msapplication-window", content: msapplication_stringify(content) },
+				attributes: { name: "msapplication-window", content },
 			}) satisfies ValueElement,
 	),
 
 	// Twitter - twitter:*
-	"twitter:card": z
-		.union([
-			z.literal("summary"),
-			z.literal("summary_large_image"),
-			z.literal("app"),
-			z.literal("player"),
-		])
-		.transform(
-			(content) =>
-				({
-					element: "meta",
-					attributes: { name: "twitter:card", content },
-				}) satisfies ValueElement,
-		),
-	"twitter:creator": twitter_username.transform(
+	"twitter:card": twitter.card.transform(
+		(content) =>
+			({
+				element: "meta",
+				attributes: { name: "twitter:card", content },
+			}) satisfies ValueElement,
+	),
+	"twitter:creator": twitter.username.transform(
 		(content) =>
 			({
 				element: "meta",
@@ -254,25 +236,20 @@ export const option = {
 				attributes: { name: "twitter:description", content },
 			}) satisfies ValueElement,
 	),
-	"twitter:image": z
-		.object({
-			src: z.string().url(),
-			alt: z.string().optional(),
-		})
-		.transform(
-			(content) =>
-				[
-					{
-						element: "meta",
-						attributes: { name: "twitter:image", content: content.src },
-					},
-					content.alt && {
-						element: "meta",
-						attributes: { name: "twitter:image:alt", content: content.alt },
-					},
-				].filter(Boolean) as ValueElement[],
-		),
-	"twitter:site": twitter_username.transform(
+	"twitter:image": twitter.image.transform(
+		(content) =>
+			[
+				{
+					element: "meta",
+					attributes: { name: "twitter:image", content: content.src },
+				},
+				content.alt && {
+					element: "meta",
+					attributes: { name: "twitter:image:alt", content: content.alt },
+				},
+			].filter(Boolean) as ValueElement[],
+	),
+	"twitter:site": twitter.username.transform(
 		(content) =>
 			({
 				element: "meta",
@@ -313,28 +290,19 @@ export const option = {
 			}) satisfies ValueElement,
 	),
 
-	// Apple - apple-* | format-detection
-	"apple-mobile-web-app-capable": z.union([z.literal("yes"), z.literal("no")]).transform(
+	// Apple - apple-*
+	"apple-mobile-web-app-capable": yes_or_no.transform(
 		(content) =>
 			({
 				element: "meta",
 				attributes: { name: "apple-mobile-web-app-capable", content },
 			}) satisfies ValueElement,
 	),
-	"apple-mobile-web-app-status-bar-style": z
-		.union([z.literal("default"), z.literal("black"), z.literal("black-translucent")])
-		.transform(
-			(content) =>
-				({
-					element: "meta",
-					attributes: { name: "apple-mobile-web-app-status-bar-style", content },
-				}) satisfies ValueElement,
-		),
-	"format-detection": z.literal("telephone=no").transform(
+	"apple-mobile-web-app-status-bar-style": apple.status_bar_style.transform(
 		(content) =>
 			({
 				element: "meta",
-				attributes: { name: "format-detection", content },
+				attributes: { name: "apple-mobile-web-app-status-bar-style", content },
 			}) satisfies ValueElement,
 	),
 	"apple-touch-startup-image": z
@@ -347,7 +315,7 @@ export const option = {
 					attributes: { rel: "apple-touch-startup-image", href: content },
 				}) satisfies ValueElement,
 		),
-	"apple-touch-icon": z.object({ href: z.string().url(), sizes: z.string() }).transform(
+	"apple-touch-icon": apple.touch_icon.transform(
 		(content) =>
 			({
 				element: "link",
@@ -391,44 +359,35 @@ export const option = {
 				attributes: { property: "og:description", content },
 			}) satisfies ValueElement,
 	),
-	"og:image": z
-		.object({
-			src: z.string().url(),
-			alt: z.string().optional(),
-			width: z.number().optional(),
-			height: z.number().optional(),
-			secure_url: z.string().url().optional(),
-			type: z.string().optional(),
-		})
-		.transform(
-			(content) =>
-				[
-					{
-						element: "meta",
-						attributes: { property: "og:image", content: content.src },
-					},
-					content.alt && {
-						element: "meta",
-						attributes: { property: "og:image:alt", content: content.alt },
-					},
-					content.width && {
-						element: "meta",
-						attributes: { property: "og:image:width", content: content.width.toString() },
-					},
-					content.height && {
-						element: "meta",
-						attributes: { property: "og:image:height", content: content.height.toString() },
-					},
-					content.secure_url && {
-						element: "meta",
-						attributes: { property: "og:image:secure_url", content: content.secure_url },
-					},
-					content.type && {
-						element: "meta",
-						attributes: { property: "og:image:type", content: content.type },
-					},
-				].filter(Boolean) as ValueElement[],
-		),
+	"og:image": opengraph.image.transform(
+		(content) =>
+			[
+				{
+					element: "meta",
+					attributes: { property: "og:image", content: content.src },
+				},
+				content.alt && {
+					element: "meta",
+					attributes: { property: "og:image:alt", content: content.alt },
+				},
+				content.width && {
+					element: "meta",
+					attributes: { property: "og:image:width", content: content.width.toString() },
+				},
+				content.height && {
+					element: "meta",
+					attributes: { property: "og:image:height", content: content.height.toString() },
+				},
+				content.secure_url && {
+					element: "meta",
+					attributes: { property: "og:image:secure_url", content: content.secure_url },
+				},
+				content.type && {
+					element: "meta",
+					attributes: { property: "og:image:type", content: content.type },
+				},
+			].filter(Boolean) as ValueElement[],
+	),
 	"og:locale": z.string().transform(
 		(content) =>
 			({
@@ -473,63 +432,39 @@ export const option = {
 					attributes: { property: "og:video", content },
 				}) satisfies ValueElement,
 		),
-	"og:type": z
-		.union([
-			z.literal("article"),
-			z.literal("book"),
-			z.literal("music.song"),
-			z.literal("music.album"),
-			z.literal("music.playlist"),
-			z.literal("music.radio_station"),
-			z.literal("profile"),
-			z.literal("video.episode"),
-			z.literal("video.movie"),
-			z.literal("video.other"),
-			z.literal("video.tv_show"),
-			z.literal("website"),
-		])
-		.transform(
-			(content) =>
-				({
-					element: "meta",
-					attributes: { property: "og:type", content },
-				}) satisfies ValueElement,
-		),
+	"og:type": opengraph.type.transform(
+		(content) =>
+			({
+				element: "meta",
+				attributes: { property: "og:type", content },
+			}) satisfies ValueElement,
+	),
 
 	// OpenGraph type=music - music:*
-	"music:duration": z
-		.number()
-		.transform(String)
-		.transform(
-			(content) =>
-				({
+	"music:duration": num_str.transform(
+		(content) =>
+			({
+				element: "meta",
+				attributes: { property: "music:duration", content },
+			}) satisfies ValueElement,
+	),
+	"music:album": opengraph.music_album.transform(
+		(content) =>
+			[
+				{
 					element: "meta",
-					attributes: { property: "music:duration", content },
-				}) satisfies ValueElement,
-		),
-	"music:album": z
-		.object({
-			album: z.string().url(),
-			album_disc: z.number().optional(),
-			album_track: z.number().optional(),
-		})
-		.transform(
-			(content) =>
-				[
-					{
-						element: "meta",
-						attributes: { property: "music:album", content: content.album },
-					},
-					content.album_disc && {
-						element: "meta",
-						attributes: { property: "music:album:disc", content: content.album_disc.toString() },
-					},
-					content.album_track && {
-						element: "meta",
-						attributes: { property: "music:album:track", content: content.album_track.toString() },
-					},
-				].filter(Boolean) as ValueElement[],
-		),
+					attributes: { property: "music:album", content: content.album },
+				},
+				content.disc && {
+					element: "meta",
+					attributes: { property: "music:album:disc", content: content.disc },
+				},
+				content.track && {
+					element: "meta",
+					attributes: { property: "music:album:track", content: content.track },
+				},
+			].filter(Boolean) as ValueElement[],
+	),
 	"music:musician": z
 		.string()
 		.url()
@@ -540,35 +475,29 @@ export const option = {
 					attributes: { property: "music:musician", content },
 				}) satisfies ValueElement,
 		),
-	"music:song": z
-		.object({
-			song: z.string().url(),
-			disc: z.number().optional(),
-			track: z.number().optional(),
-		})
-		.transform(
-			(content) =>
-				[
-					{
-						element: "meta",
-						attributes: { property: "music:song", content: content.song },
-					},
-					content.disc && {
-						element: "meta",
-						attributes: { property: "music:song:disc", content: content.disc.toString() },
-					},
-					content.track && {
-						element: "meta",
-						attributes: { property: "music:song:track", content: content.track.toString() },
-					},
-				].filter(Boolean) as ValueElement[],
-		),
+	"music:song": opengraph.music_song.transform(
+		(content) =>
+			[
+				{
+					element: "meta",
+					attributes: { property: "music:song", content: content.song },
+				},
+				content.disc && {
+					element: "meta",
+					attributes: { property: "music:song:disc", content: content.disc.toString() },
+				},
+				content.track && {
+					element: "meta",
+					attributes: { property: "music:song:track", content: content.track.toString() },
+				},
+			].filter(Boolean) as ValueElement[],
+	),
 
-	"music:release_date": z.date().transform(
+	"music:release_date": date_iso.transform(
 		(content) =>
 			({
 				element: "meta",
-				attributes: { property: "music:release_date", content: content.toISOString() },
+				attributes: { property: "music:release_date", content },
 			}) satisfies ValueElement,
 	),
 	"music:creator": z
@@ -583,24 +512,19 @@ export const option = {
 		),
 
 	// OpenGraph type=video - video:*
-	"video:actor": z
-		.object({
-			actor: z.string().url(),
-			role: z.string().optional(),
-		})
-		.transform(
-			(content) =>
-				[
-					{
-						element: "meta",
-						attributes: { property: "video:actor", content: content.actor },
-					},
-					content.role && {
-						element: "meta",
-						attributes: { property: "video:actor:role", content: content.role },
-					},
-				].filter(Boolean) as ValueElement[],
-		),
+	"video:actor": opengraph.video_actor.transform(
+		(content) =>
+			[
+				{
+					element: "meta",
+					attributes: { property: "video:actor", content: content.actor },
+				},
+				content.role && {
+					element: "meta",
+					attributes: { property: "video:actor:role", content: content.role },
+				},
+			].filter(Boolean) as ValueElement[],
+	),
 	"video:director": z
 		.string()
 		.url()
@@ -611,18 +535,18 @@ export const option = {
 					attributes: { property: "video:director", content },
 				}) satisfies ValueElement,
 		),
-	"video:duration": z.object({ content: z.number().transform(String) }).transform(
+	"video:duration": num_str.transform(
 		(content) =>
 			({
 				element: "meta",
-				attributes: { property: "video:duration", content: content.content },
+				attributes: { property: "video:duration", content },
 			}) satisfies ValueElement,
 	),
-	"video:release_date": z.date().transform(
+	"video:release_date": date_iso.transform(
 		(content) =>
 			({
 				element: "meta",
-				attributes: { property: "video:release_date", content: content.toISOString() },
+				attributes: { property: "video:release_date", content },
 			}) satisfies ValueElement,
 	),
 	"video:tag": z.string().transform(
@@ -664,25 +588,25 @@ export const option = {
 					attributes: { property: "article:author", content },
 				}) satisfies ValueElement,
 		),
-	"article:expiration_time": z.date().transform(
+	"article:expiration_time": date_iso.transform(
 		(content) =>
 			({
 				element: "meta",
-				attributes: { property: "article:expiration_time", content: content.toISOString() },
+				attributes: { property: "article:expiration_time", content },
 			}) satisfies ValueElement,
 	),
-	"article:modified_time": z.date().transform(
+	"article:modified_time": date_iso.transform(
 		(content) =>
 			({
 				element: "meta",
-				attributes: { property: "article:modified_time", content: content.toISOString() },
+				attributes: { property: "article:modified_time", content },
 			}) satisfies ValueElement,
 	),
-	"article:published_time": z.date().transform(
+	"article:published_time": date_iso.transform(
 		(content) =>
 			({
 				element: "meta",
-				attributes: { property: "article:published_time", content: content.toISOString() },
+				attributes: { property: "article:published_time", content },
 			}) satisfies ValueElement,
 	),
 	"article:section": z.string().transform(
@@ -718,11 +642,11 @@ export const option = {
 				attributes: { property: "book:isbn", content },
 			}) satisfies ValueElement,
 	),
-	"book:release_date": z.date().transform(
+	"book:release_date": date_iso.transform(
 		(content) =>
 			({
 				element: "meta",
-				attributes: { property: "book:release_date", content: content.toISOString() },
+				attributes: { property: "book:release_date", content },
 			}) satisfies ValueElement,
 	),
 	"book:tag": z.string().transform(
@@ -765,28 +689,8 @@ export const option = {
 };
 
 export type OptionInput = {
-	[key in keyof typeof option]: z.input<(typeof option)[key]>;
+	[key in keyof typeof value_option]: z.input<(typeof value_option)[key]>;
 };
 export type OptionOutput = {
-	[key in keyof typeof option]: z.output<(typeof option)[key]>;
+	[key in keyof typeof value_option]: z.output<(typeof value_option)[key]>;
 };
-
-export type Values = PickArrayLike<
-	OptionOutput,
-	| "msapplication-task"
-	| "twitter:image"
-	| "apple-touch-icon"
-	| "og:image"
-	| "og:locale:alternate"
-	| "music:album"
-	| "music:musician"
-	| "music:song"
-	| "video:actor"
-	| "video:director"
-	| "video:tag"
-	| "video:writer"
-	| "article:author"
-	| "article:tag"
-	| "book:author"
-	| "book:tag"
->;
