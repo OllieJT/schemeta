@@ -17,25 +17,34 @@
 
 </div>
 
+- [Why does this exist?](#why-does-this-exist)
 - [Features](#features)
 - [Supported Metadata](#supported-metadata)
 - [Overview](#overview)
-  - [Define Data](#define-data)
-  - [Render meta-tags on the server (optional)](#render-meta-tags-on-the-server-optional)
-    - [Server](#server)
-    - [Option 1: Render HTML on the client](#option-1-render-html-on-the-client)
-    - [Option 2: Initialize Metadata on the client](#option-2-initialize-metadata-on-the-client)
+	- [Define Data](#define-data)
+	- [Render meta-tags on the server (optional)](#render-meta-tags-on-the-server-optional)
+		- [Server](#server)
+		- [Option 1: Render HTML on the client](#option-1-render-html-on-the-client)
+		- [Option 2: Initialize Metadata on the client](#option-2-initialize-metadata-on-the-client)
 - [Setup](#setup)
-  - [Installation](#installation)
+	- [Installation](#installation)
 - [API](#api)
-  - [`Metadata` Instance](#metadata-instance)
-    - [Add values](#add-values)
-    - [Render elements](#render-elements)
-  - [Undocumented](#undocumented)
+	- [`Metadata` Instance](#metadata-instance)
+		- [Add values](#add-values)
+		- [Render elements](#render-elements)
+	- [Undocumented](#undocumented)
 - [Examples](#examples)
-  - [Vanilla Example](#vanilla-example)
-  - [Svelte Example](#svelte-example)
-  - [React Example](#react-example)
+	- [Vanilla Example](#vanilla-example)
+	- [Svelte Example](#svelte-example)
+	- [React Example](#react-example)
+
+## Why does this exist?
+
+You might be thinking, why does this exist? You're not crazy. Metadata is simple, repeatable, and boring. It's exactly this kind of boilerplate that I want to avoid in my work, and the kind of task that is easily overlooked while prioritising more unique tasks.
+
+Schemeta was created to codify the building of metadata for a page, or site. Much like how frameworks impose a concise and repeatable structure to rabidly scaffold the common needs of projects - Schemeta provides a universal type-safe solution for making the most out of tags.
+
+Finally, there are many metadata specifications, and values that are overlooked or skipped; like JSON-LD, or Apple Web-App tags. With type-safe methods, I hope it will be easier for consumers of this package to disover new ways to express their data to support their users, or promote their content.
 
 ## Features
 
@@ -48,7 +57,8 @@
 
 ## Supported Metadata
 
-Are we missing any? [file an issue](https://github.com/OllieJT/schemeta/issues) to let us know.
+> [!NOTE]
+> Are we missing any? [file an issue](https://github.com/OllieJT/schemeta/issues) to let us know.
 
 | Source    | Type                                                                       | Details                                                                                                                                                                                                                                                                                                                             |
 | --------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -221,7 +231,8 @@ metadata
 | helper: `.site_name(string)`   | Adds several site name values like `og:site_name` & `apple-mobile-web-app-title`  |
 | helper: `.type(type, params)`  | Adds `og:type` and optional related OpenGraph values                              |
 
-We plan to add more helper methods to reduce boilerplate.
+> [!NOTE]
+> Got an idea for a common helper method? [file an issue](https://github.com/OllieJT/schemeta/issues) to let us know, or better yet submit a PR!
 
 #### Render elements
 
