@@ -8,6 +8,7 @@ export type MetadataInitialValues = Partial<Values>;
 export class Metadata {
 	#raw_values: MetadataValues = {
 		title: undefined,
+		bookmark: undefined,
 		"application/ld+json": [],
 		"application-name": undefined,
 		description: undefined,
@@ -131,7 +132,6 @@ export class Metadata {
 		this.add("msapplication-starturl", content);
 		return this;
 	}
-
 	image(img: {
 		src: string;
 		alt?: string;
@@ -142,6 +142,12 @@ export class Metadata {
 	}) {
 		this.add("og:image", img);
 		this.add("twitter:image", img);
+		return this;
+	}
+	site_name(content: string) {
+		this.add("og:site_name", content);
+		this.add("application-name", content);
+		this.add("apple-mobile-web-app-title", content);
 		return this;
 	}
 
@@ -420,51 +426,3 @@ export class Metadata {
 		return html.join("\n");
 	}
 }
-
-const metadata = new Metadata();
-
-metadata
-	.add("og:site_name", "DesignThen")
-	.title("The tech stack behind our projects in 2024")
-	.description(
-		"Curious about DesignThen's approach? Gain insights into our design & development philosophy, and the tools shaping our work.",
-	)
-	.type({
-		type: "article",
-		params: {
-			authors: ["Ollie Taylor"],
-			published_time: new Date("2024-02-03T16:00:00Z"),
-			section: "Web Development",
-		},
-	})
-	.add("application/ld+json", {
-		"@type": "Article",
-		author: { "@type": "Person", name: "Ollie Taylor" },
-		headline: "The tech stack behind our projects in 2024",
-		datePublished: "2024-02-03T16:00:00Z",
-	});
-
-/*
-
-
-
-<script type="application/ld+json">
-	{
-		"@context": "http://schema.org",
-		"@type": "CollectionPage",
-		"name": "BBC - Home",
-		"headline": "BBC - Home",
-		"url": "https://www.bbc.co.uk/",
-		"publisher": {
-			"@type": "NewsMediaOrganization",
-			"name": "BBC",
-			"publishingPrinciples": "https://www.bbc.co.uk/news/help-41670342",
-			"logo": {
-				"@type": "ImageObject",
-				"url": "https://static.files.bbci.co.uk/core/website/assets/static/webcore/bbc_blocks_84x24.5b565ac136ea8f9cb3b0f8e02eca1e0f.svg"
-			}
-		},
-		"mainEntity": { "@type": "ItemList", "itemListElement": [] }
-	}
-</script>
-*/

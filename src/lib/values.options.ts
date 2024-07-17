@@ -24,6 +24,13 @@ export const value_option = {
 				children,
 			}) satisfies ValueElement,
 	),
+	bookmark: z.string().transform(
+		(content) =>
+			({
+				element: "link",
+				attributes: { rel: "bookmark", href: content },
+			}) satisfies ValueElement,
+	),
 	"application/ld+json": z
 		.custom<LinkedData>(
 			(data) => {
