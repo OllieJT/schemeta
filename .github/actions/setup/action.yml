@@ -12,7 +12,3 @@ runs:
 
     - shell: bash
       run: pnpm install
-
-    - name: Build Project
-      shell: bash
-      run: pnpm build
