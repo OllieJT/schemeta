@@ -1,5 +1,13 @@
 # schemeta
 
+## 0.2.3
+
+### Patch Changes
+
+- [#20](https://github.com/OllieJT/schemeta/pull/20) [`76c5f5e`](https://github.com/OllieJT/schemeta/pull/20/commits/76c5f5ed4060a78b87565faeba017b4f7a336809) Thanks [@OllieJT](https://github.com/OllieJT)! - update tag order
+
+- [#19](https://github.com/OllieJT/schemeta/pull/19) [`a946503`](https://github.com/OllieJT/schemeta/pull/19) Thanks [@OllieJT](https://github.com/OllieJT)! - Adds missing apple meta tags
+
 ## 0.2.1
 
 ### Patch Changes
