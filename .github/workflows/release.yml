@@ -19,11 +19,17 @@ jobs:
 
       - uses: ./.github/actions/setup
 
-      - name: Check for errors
-        run: pnpm check
-
       - name: Build the package
         run: pnpm build
+
+      - name: Run Prettier
+        run: pnpm run format:check
+
+      - name: Check for typescript errors
+        run: pnpm run typecheck
+
+      - name: Check for ESlint errors
+        run: pnpm run lint
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
