@@ -98,23 +98,31 @@ export class Metadata {
 	}
 
 	add<Key extends keyof OptionInput>(key: Key, input: OptionInput[Key]) {
-		const validator = value_option[key];
-		if (!validator) throw new Error(`Unable to validate key: ${key}`);
+		try {
+			const validator = value_option[key];
+			const output = validator.safeParse(input);
 
-		const output = validator.parse(input);
-
-		if (Array.isArray(this.#values[key])) {
-			// Appending Value
-			this.#values = {
-				...this.#values,
-				[key]: [...this.#values[key], output],
-			};
-		} else {
-			// Replacing Value
-			this.#values = {
-				...this.#values,
-				[key]: output,
-			};
+			if (output.success) {
+				if (Array.isArray(this.#values[key])) {
+					// Appending Value
+					this.#values = {
+						...this.#values,
+						[key]: [...this.#values[key], output.data],
+					};
+				} else {
+					// Replacing Value
+					this.#values = {
+						...this.#values,
+						[key]: output.data,
+					};
+				}
+			} else {
+				console.warn(`Invalid value for Metadata key: ${key}`);
+				console.warn(output.error);
+			}
+		} catch (e) {
+			console.warn(`Unable to validate key: ${key}`);
+			console.warn(e);
 		}
 		return this;
 	}

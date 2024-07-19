@@ -14,7 +14,7 @@ function element_to_html(data: ValueElement) {
 	const attribs = attributes_to_string(data.attributes || {});
 
 	if (data.children) {
-		return `<${data.element} ${attribs}>${JSON.stringify(data.children)}</${data.element}>`;
+		return `<${data.element} ${attribs}>${data.children}</${data.element}>`;
 	} else {
 		return `<${data.element} ${attribs} />`;
 	}
