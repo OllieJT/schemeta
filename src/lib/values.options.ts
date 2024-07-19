@@ -45,8 +45,10 @@ export const value_option = {
 			(children) =>
 				({
 					element: "script",
-					attributes: {},
-					children: `\n\t${JSON.stringify(children)}\n`,
+					attributes: {
+						type: "application/ld+json",
+					},
+					children: `\n\t${JSON.stringify(children, null, 2)}\n`,
 				}) satisfies ValueElement,
 		),
 	"application-name": z.string().transform(

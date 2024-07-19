@@ -35,7 +35,7 @@
   - [Undocumented](#undocumented)
 - [Examples](#examples)
   - [Vanilla Example](#vanilla-example)
-  - [Svelte Example](#svelte-example)
+  - [SvelteKit Example](#sveltekit-example)
   - [React Example](#react-example)
 
 ## Why does this exist?
@@ -253,9 +253,65 @@ Most helper functions and types are exposed, however we won't be documenting the
 
 TODO
 
-### Svelte Example
+### SvelteKit Example
 
-TODO
+**SSR Metadata for every route (Optional)**
+
+If you want to consistently pass metadata from server to client, you can enforce this with PageData types in `app.d.ts`
+
+```ts
+// /src/app.d.ts
+declare global {
+	namespace App {
+		interface PageData {
+			metadata: import("schemeta").MetadataValues;
+		}
+	}
+}
+```
+
+**Render Metadata Tags**
+
+You can create a component to handle the rendering of your metadata elements.
+
+```svelte
+<!-- RenderMetadata.svelte -->
+<script lang="ts">
+	import type { ValueElement } from "schemeta";
+
+	// Svelte 5 Syntax
+	const { elements = [] }: { elements: ValueElement[] } = $props();
+
+	// Svelte 3 + 4 Syntax
+	export let elements: ValueElement[] = []
+</script>
+
+<svelte:head>
+	{#each elements as { element, attributes, children }}
+		{#if children}
+			<svelte:element this={element} {...attributes}>
+				{String(children)}
+			</svelte:element>
+		{:else}
+			<svelte:element this={element} {...attributes} />
+		{/if}
+	{/each}
+</svelte:head>
+```
+
+```svelte
+<!-- /src/routes/+page.svelte -->
+<script lang="ts">
+	import { Metadata } from "schemeta";
+	import RenderMetadata from "$components/RenderMetadata.svelte";
+
+	let { data } = $props();
+
+	const metadata = new Metadata(data.metadata);
+</script>
+
+<RenderMetadata elements={metadata.toElements()} />
+```
 
 ### React Example
 
