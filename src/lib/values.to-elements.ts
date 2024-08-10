@@ -6,7 +6,13 @@ export function values_to_elements(values: Values): ValueElement[] {
 	Object.values(values).forEach((value) => {
 		if (!value) return;
 		else if (Array.isArray(value)) {
-			elements.push(...value.flat(2));
+			value.forEach((v_a) => {
+				if (Array.isArray(v_a)) {
+					v_a.forEach((v_b) => elements.push(v_b));
+				} else {
+					elements.push(v_a);
+				}
+			});
 		} else {
 			elements.push(value);
 		}
