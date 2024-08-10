@@ -573,16 +573,13 @@ export const value_option = {
 		),
 
 	// OpenGraph type=article - article:*
-	"article:author": z
-		.string()
-		.url()
-		.transform(
-			(content) =>
-				({
-					element: "meta",
-					attributes: { property: "article:author", content },
-				}) satisfies ValueElement,
-		),
+	"article:author": z.string().transform(
+		(content) =>
+			({
+				element: "meta",
+				attributes: { property: "article:author", content },
+			}) satisfies ValueElement,
+	),
 	"article:expiration_time": date_iso.transform(
 		(content) =>
 			({
